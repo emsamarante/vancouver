@@ -73,10 +73,10 @@ fig_bar.update_layout(main_config, height=170,
 
 # Gráfico multilinhas =================================================
 df = pd.DataFrame(df_store)
-df = df.groupby(['TYPE', 'YEAR'])['DAY'].count(
+aux_multi = df.groupby(['TYPE', 'YEAR'])['DAY'].count(
 ).reset_index().rename(columns={'DAY': 'COUNTING'})
 
-fig_multilinhas = px.line(df, x='YEAR', y='COUNTING',
+fig_multilinhas = px.line(aux_multi, x='YEAR', y='COUNTING',
                           color='TYPE')
 # updates
 fig_multilinhas.update_layout(main_config, height=230, xaxis_title=None)

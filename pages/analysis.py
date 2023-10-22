@@ -183,7 +183,16 @@ layout = dbc.Container(children=[
                     ], className='g-2 my-auto'),
                     dbc.Row([
                         dbc.Col([
-                            CARD("Crimes Over Year", "id-graph-line-1", lg=12),
+                            dbc.Card([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        dbc.Col([
+                                            html.H5("Crimes Over Year"),
+                                            dcc.Graph(id="id-graph-line-1", config=config_graph, figure=fig_multilinhas)], lg=12),
+                                    ])
+                                ])
+                            ], style=tab_card),
+                            # CARD("Crimes Over Year", "id-graph-line-1", lg=12),
                             make_tooltip(
                                 "Seeing the crimes over year", "id-graph-line-1")
                         ]),
@@ -237,125 +246,90 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
-# ====================== CARD indicador 1
-@app.callback(
-    Output('id-card-indicator-2', 'figure'),
-    [Input('dataset', 'data'),
-     Input('drop-month-1', 'value'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-@cache.memoize(timeout=180)  # in seconds
-def update_graph(data, month, crime_selected, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    year = 2022
-    datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
-        columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
-    df.loc[:, 'DATE'] = datetime_series
-    df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
-        'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
-    dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
-        (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
-    # Limpando as variáveis"
-    del df
-    del datetime_series
-
-    dff = dff.drop(['YEAR', 'MONTH'], axis=1)
-    for crime in df_crimes.TYPE.unique():
-        for date in dff.DATE.unique():
-            if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
-                dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
-    dff['COUNTING'] = dff['COUNTING'].astype(int)
-    df_filtered = dff[dff.TYPE.isin([crime_selected])]
-    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-    fig = go.Figure()
-    fig.add_trace(go.Indicator(
-        mode="number+delta",
-        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-        number={'valueformat': '.0f', 'font': {'size': 60}},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
-    ))
-    fig = go.Figure(go.Indicator(
-        mode="number+delta",
-        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:0.5em'>{year} - {year-1}</span>"},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
-        domain={'x': [0, 1], 'y': [0.05, 0.7]}
-    ))
-    fig.update_layout(main_config, height=170, template=template)
-    return fig
+# # ====================== CARD indicador 1
+# @app.callback(
+#     Output('id-card-indicator-2', 'figure'),
+#     [Input('dataset', 'data'),
+#      Input('drop-month-1', 'value'),
+#      Input('drop-crime-1', 'value'),
+#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# @cache.memoize(timeout=180)  # in seconds
 # def update_graph(data, month, crime_selected, toggle):
-#     pass
+#     template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     year = 2022
+#     datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
+#         columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
+#     df.loc[:, 'DATE'] = datetime_series
+#     df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
+#         'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
+#     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
+#         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
+#     # Limpando as variáveis"
+#     del df
+#     del datetime_series
+
+#     dff = dff.drop(['YEAR', 'MONTH'], axis=1)
+#     for crime in df_crimes.TYPE.unique():
+#         for date in dff.DATE.unique():
+#             if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
+#                 dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
+#     dff['COUNTING'] = dff['COUNTING'].astype(int)
+#     df_filtered = dff[dff.TYPE.isin([crime_selected])]
+#     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
+#     fig = go.Figure()
+#     fig.add_trace(go.Indicator(
+#         mode="number+delta",
+#         title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+#         number={'valueformat': '.0f', 'font': {'size': 60}},
+#         delta={'relative': True, 'valueformat': '.1%',
+#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
+#     ))
+#     fig = go.Figure(go.Indicator(
+#         mode="number+delta",
+#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+#         title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:0.5em'>{year} - {year-1}</span>"},
+#         delta={'relative': True, 'valueformat': '.1%',
+#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
+#         domain={'x': [0, 1], 'y': [0.05, 0.7]}
+#     ))
+#     fig.update_layout(main_config, height=170, template=template)
+#     return fig
+# # def update_graph(data, month, crime_selected, toggle):
+# #     pass
 
 
-# ====================== CARD indicador 2
-@app.callback(
-    Output('id-card-indicator-1', 'figure'),
-    [Input('dataset', 'data'),
-     Input('drop-year-1', 'value'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-def update_graph(data, year, crime, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    dff = df[df['TYPE'] == crime]
-    aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
-        columns={'DAY': 'COUNTING'})
-    fig_indicator = go.Figure()
-    fig_indicator.add_trace(go.Indicator(
-        mode="number+delta",
-        title={"text": f"<span style='font-size:1em'>{year} - {year-1}</span>"},
-        value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
-        number={'valueformat': '.0f', 'font': {'size': 60}},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]}
-    ))
-    del aux
-    fig_indicator.update_layout(main_config, height=170, template=template)
-    return fig_indicator
+# # ====================== CARD indicador 2
+# @app.callback(
+#     Output('id-card-indicator-1', 'figure'),
+#     [Input('dataset', 'data'),
+#      Input('drop-year-1', 'value'),
+#      Input('drop-crime-1', 'value'),
+#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
 # def update_graph(data, year, crime, toggle):
-#     pass
+#     template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     dff = df[df['TYPE'] == crime]
+#     aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
+#         columns={'DAY': 'COUNTING'})
+#     fig_indicator = go.Figure()
+#     fig_indicator.add_trace(go.Indicator(
+#         mode="number+delta",
+#         title={"text": f"<span style='font-size:1em'>{year} - {year-1}</span>"},
+#         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
+#         number={'valueformat': '.0f', 'font': {'size': 60}},
+#         delta={'relative': True, 'valueformat': '.1%',
+#                'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]}
+#     ))
+#     del aux
+#     fig_indicator.update_layout(main_config, height=170, template=template)
+#     return fig_indicator
+# # def update_graph(data, year, crime, toggle):
+# #     pass
 
-
-====================== Grafico de barra
-@app.callback(
-    Output('id-graph-1', 'figure'),
-    [Input('dataset', 'data'),
-     Input('drop-year-1', 'value'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-def update_graph(data, year, crime, toggle):
-    start = time.time()
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    dff = df[(df['TYPE'] == crime) & (df.YEAR.isin([year]))]
-    aux = dff.groupby(['NEIGHBOURHOOD']).count()[
-        'DAY'].reset_index().rename(columns={'DAY': 'COUNTING'})
-    aux = aux.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
-                          ascending=False).reset_index()
-    aux1 = aux.copy()
-    aux1['NEIGHBOURHOOD'] = np.where(
-        aux1.loc[:, "COUNTING"] < aux1.at[aux1.index[4], "COUNTING"], "Others Neighbourhoods", aux1['NEIGHBOURHOOD'])
-    aux1 = aux1.groupby(['NEIGHBOURHOOD'])['COUNTING'].sum(
-    ).reset_index().sort_values(['COUNTING'])
-    bairros_todos = aux.NEIGHBOURHOOD.unique().tolist()
-    del aux
-    bairros_agrupados = aux1.NEIGHBOURHOOD.unique().tolist()
-    others_bairros = list(set(bairros_todos).difference(bairros_agrupados))
-    # fig_bar = px.pie(aux, values='COUNTING', names='NEIGHBOURHOOD', title=None)
-    fig_bar = px.bar(aux1, x='COUNTING', y='NEIGHBOURHOOD', title=None)
-    fig_bar.update_layout(main_config, height=250,
-                          template=template, yaxis_title=None)
-    end = time.time()
-    elapsed = end - start
-    print(elapsed)
-    return fig_bar
 
 @app.callback(
     Output('id-graph-1', 'figure'),
@@ -389,137 +363,132 @@ def update_graph(year, crime):
 
 @app.callback(
     Output("id-graph-line-1", 'figure'),
-    [Input('dataset-fixed', 'data'),
-     Input('drop-crime-3', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+    [Input('drop-crime-3', 'value'),]
 )
 @cache.memoize(timeout=180)  # in seconds
-def update_graph(data, crimes, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-
+def update_graph(crimes):
+    # template = template_theme1 if toggle else template_theme2
     if crimes is []:
         # Evita a execução do callback se o valor for None
         raise dash.exceptions.PreventUpdate
     else:
-        df = df.groupby(['TYPE', 'YEAR'])['DAY'].count(
-        ).reset_index().rename(columns={'DAY': 'COUNTING'})
-        mask = df.TYPE.isin(crimes)
-        fig = px.line(df[mask], x='YEAR', y='COUNTING',
-                      color='TYPE', template=template)
+
+        mask = aux_multi.TYPE.isin(crimes)
+        fig = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
+                      color='TYPE')
         # updates
         fig.update_layout(main_config, height=230, xaxis_title=None)
         return fig
 # def update_graph(data, crimes, toggle):
 #     pass
 
-# ======================= Grafico comparacao
+# # ======================= Grafico comparacao
 
 
-@app.callback(
-    [Output("id-graph-comparison", 'figure'),
-     Output('desc_comparison', 'children')],
-    [Input('dataset-fixed', 'data'),
-     Input('drop-crime-1', 'value'),
-     Input('drop-bairro-1', 'value'),
-     Input('drop-bairro-2', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-@cache.memoize(timeout=180)  # in seconds
-def update_graph(data, crime, bairro1, bairro2, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
-    df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
-    df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
-        'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-    df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
-        'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-    df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
-    df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
-    df_final = pd.DataFrame()
-    df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
-    df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
-
-    del df_bairro1
-
-    fig = go.Figure()
-    # Toda linha
-    fig.add_scattergl(name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
-    # Abaixo de zero
-    fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-        df_final['COUNTING'] > 0.00000))
-    # Updates
-    fig.update_layout(main_config, height=180, template=template)
-    # fig.update_yaxes(range = [-0.7,0.7])
-    # Annotations pra mostrar quem é o mais barato
-    fig.add_annotation(text=f'{bairro2} mais barato',
-                       xref="paper", yref="paper",
-                       font=dict(
-                           family="Courier New, monospace",
-                           size=12,
-                           color="#ffffff"
-                       ),
-                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                       x=0.5, y=0.75, showarrow=False)
-    fig.add_annotation(text=f'{bairro2} mais barato',
-                       xref="paper", yref="paper",
-                       font=dict(
-                           family="Courier New, monospace",
-                           size=12,
-                           color="#ffffff"
-                       ),
-                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                       x=0.5, y=0.25, showarrow=False)
-    # Definindo o texto
-    text = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
-    return [fig, text]
+# @app.callback(
+#     [Output("id-graph-comparison", 'figure'),
+#      Output('desc_comparison', 'children')],
+#     [Input('dataset-fixed', 'data'),
+#      Input('drop-crime-1', 'value'),
+#      Input('drop-bairro-1', 'value'),
+#      Input('drop-bairro-2', 'value'),
+#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# @cache.memoize(timeout=180)  # in seconds
 # def update_graph(data, crime, bairro1, bairro2, toggle):
-#     pass
+#     template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
+#     df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
+#     df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
+#         'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
+#     df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
+#         'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
+#     df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
+#     df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
+#     df_final = pd.DataFrame()
+#     df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
+#     df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
 
-# #======================= Gráfico Periodo
+#     del df_bairro1
+
+#     fig = go.Figure()
+#     # Toda linha
+#     fig.add_scattergl(name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
+#     # Abaixo de zero
+#     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
+#         df_final['COUNTING'] > 0.00000))
+#     # Updates
+#     fig.update_layout(main_config, height=180, template=template)
+#     # fig.update_yaxes(range = [-0.7,0.7])
+#     # Annotations pra mostrar quem é o mais barato
+#     fig.add_annotation(text=f'{bairro2} mais barato',
+#                        xref="paper", yref="paper",
+#                        font=dict(
+#                            family="Courier New, monospace",
+#                            size=12,
+#                            color="#ffffff"
+#                        ),
+#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+#                        x=0.5, y=0.75, showarrow=False)
+#     fig.add_annotation(text=f'{bairro2} mais barato',
+#                        xref="paper", yref="paper",
+#                        font=dict(
+#                            family="Courier New, monospace",
+#                            size=12,
+#                            color="#ffffff"
+#                        ),
+#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+#                        x=0.5, y=0.25, showarrow=False)
+#     # Definindo o texto
+#     text = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
+#     return [fig, text]
+# # def update_graph(data, crime, bairro1, bairro2, toggle):
+# #     pass
+
+# # #======================= Gráfico Periodo
 
 
-@app.callback(
-    Output("id-periodo", "figure"),
-    [Input('dataset', 'data'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-def update_graph(data, crime, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
+# @app.callback(
+#     Output("id-periodo", "figure"),
+#     [Input('dataset', 'data'),
+#      Input('drop-crime-1', 'value'),
+#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# def update_graph(data, crime, toggle):
+#     template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
 
-    dff = df[df.TYPE.isin([crime])]
-    del df
+#     dff = df[df.TYPE.isin([crime])]
+#     del df
 
-    fig = px.pie(dff.groupby('PERIOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                 names='PERIOD', values='COUNTING', color='PERIOD')
+#     fig = px.pie(dff.groupby('PERIOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
+#                  names='PERIOD', values='COUNTING', color='PERIOD')
 
-    fig.update_layout(main_config, height=200, template=template)
+#     fig.update_layout(main_config, height=200, template=template)
 
-    return fig
+#     return fig
 
-# #======================= Gráfico estações
+# # #======================= Gráfico estações
 
 
-@app.callback(
-    Output("id-estacao-graph", "figure"),
-    [Input('dataset', 'data'),
-     Input('drop-crime-1', 'value'),
-     Input('drop-year-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-def update_graph(data, crime, year, toggle):
-    template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
+# @app.callback(
+#     Output("id-estacao-graph", "figure"),
+#     [Input('dataset', 'data'),
+#      Input('drop-crime-1', 'value'),
+#      Input('drop-year-1', 'value'),
+#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# def update_graph(data, crime, year, toggle):
+#     template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
-    fig = px.bar(dff.groupby('NEIGHBOURHOOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                 x='NEIGHBOURHOOD', y='COUNTING')
+#     fig = px.bar(dff.groupby('NEIGHBOURHOOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
+#                  x='NEIGHBOURHOOD', y='COUNTING')
 
-    fig.update_layout(main_config, height=200,
-                      template=template, xaxis_title=None)
+#     fig.update_layout(main_config, height=200,
+#                       template=template, xaxis_title=None)
 
-    return fig
+#     return fig
