@@ -257,7 +257,19 @@ layout = dbc.Container(children=[
                         ], style=tab_card),
                         # CARD("Análise por estações", "id-estacao-graph", lg=12),
                     ], lg=10),
-                dbc.Col([CARD("Análise por período", "id-periodo", lg=12)], lg=2)
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody([
+                            dbc.Row([
+                                    dbc.Col([
+                                        html.H5("Análise por periodo"),
+                                        dcc.Graph(id="id-period", config=config_graph, figure=fig_periodo)], lg=12),
+                                    ])
+                        ])
+                    ], style=tab_card),
+
+                    # CARD("Análise por período", "id-periodo", lg=12)
+                ], lg=2)
             ], className='g-2 my-auto')
 
         ], className='g-2 my-auto'),])
@@ -465,31 +477,28 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
 # # def update_graph(data, crime, bairro1, bairro2, toggle):
 # #     pass
 
-# # #======================= Gráfico Periodo
+# #======================= Gráfico Periodo
 
 
-# @app.callback(
-#     Output("id-periodo", "figure"),
-#     [Input('dataset', 'data'),
-#      Input('drop-crime-1', 'value'),
-#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# def update_graph(data, crime, toggle):
-#     template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
+@app.callback(
+    Output("id-periodo", "figure"),
+    [Input('drop-crime-1', 'value'),]
+    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+def update_graph(crime):
+    # template = template_theme1 if toggle else template_theme2
 
-#     dff = df[df.TYPE.isin([crime])]
-#     del df
+    aux = df_crimes[df_crimes.TYPE.isin([crime])]
+    fig_periodo = px.bar(aux,
+                         x='PERIOD', y='COUNTING')
 
-#     fig = px.pie(dff.groupby('PERIOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-#                  names='PERIOD', values='COUNTING', color='PERIOD')
+    fig_periodo.update_layout(main_config, height=200)
 
-#     fig.update_layout(main_config, height=200, template=template)
-
-#     return fig
+    return fig_periodo
 
 # #======================= Gráfico estações
+
+
 @app.callback(
     Output("id-estacao-graph", "figure"),
     [Input('drop-crime-1', 'value'),

@@ -136,8 +136,20 @@ text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima d
 
 # Criando gráfico estacoes ==========================================
 df = pd.DataFrame(df_store)
-
 fig_estacoes = px.bar(df.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
                       x='SEASON', y='COUNTING')
 
 fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
+
+# Criando gráfico período ===========================================
+df = pd.DataFrame(df_store)
+df['PERIOD'] = None
+df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
+df_crimes = df.groupby(['PERIOD', 'TYPE'])['DAY'].count(
+).reset_index().rename(columns={'DAY': 'COUNTING'})
+
+
+fig_periodo = px.bar(df_crimes,
+                     x='PERIOD', y='COUNTING')
+
+fig_periodo.update_layout(main_config, height=200)
