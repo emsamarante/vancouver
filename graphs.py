@@ -59,7 +59,7 @@ df_store = df.to_dict()
 df = pd.DataFrame(df_store)
 
 
-# Criando gráfico de barra
+# Criando gráfico de barra ===========================================
 aux = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).count()[
     'DAY'].reset_index().rename(columns={'DAY': 'COUNTING'})
 
@@ -70,3 +70,13 @@ aux = aux.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
 fig_bar = px.bar(aux, x='COUNTING', y='NEIGHBOURHOOD', title=None)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None)
+
+# Gráfico multilinhas =================================================
+df = pd.DataFrame(df_store)
+df = df.groupby(['TYPE', 'YEAR'])['DAY'].count(
+).reset_index().rename(columns={'DAY': 'COUNTING'})
+
+fig_multilinhas = px.line(df, x='YEAR', y='COUNTING',
+                          color='TYPE')
+# updates
+fig_multilinhas.update_layout(main_config, height=230, xaxis_title=None)
