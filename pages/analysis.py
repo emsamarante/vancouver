@@ -245,7 +245,18 @@ layout = dbc.Container(children=[
             ], className='g-2 my-auto',),
             dbc.Row([
                 dbc.Col(
-                    [CARD("Análise por estações", "id-estacao-graph", lg=12)], lg=10),
+                    [
+                        dbc.Card([
+                            dbc.CardBody([
+                                dbc.Row([
+                                    dbc.Col([
+                                        html.H5("Análise por estações"),
+                                        dcc.Graph(id="id-estacao-graph", config=config_graph, figure=fig_estacoes)], lg=12),
+                                ])
+                            ])
+                        ], style=tab_card),
+                        # CARD("Análise por estações", "id-estacao-graph", lg=12),
+                    ], lg=10),
                 dbc.Col([CARD("Análise por período", "id-periodo", lg=12)], lg=2)
             ], className='g-2 my-auto')
 
@@ -478,25 +489,18 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
 
 #     return fig
 
-# # #======================= Gráfico estações
+# #======================= Gráfico estações
+@app.callback(
+    Output("id-estacao-graph", "figure"),
+    [Input('drop-crime-1', 'value'),
+     Input('drop-year-1', 'value'),]
+)
+def update_graph(crime, year):
+    dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
+    fig_estacoes = px.bar(dff.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
+                          x='SEASON', y='COUNTING')
 
-# @app.callback(
-#     Output("id-estacao-graph", "figure"),
-#     [Input('dataset', 'data'),
-#      Input('drop-crime-1', 'value'),
-#      Input('drop-year-1', 'value'),
-#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# def update_graph(data, crime, year, toggle):
-#     template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
+    fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
 
-#     fig = px.bar(dff.groupby('NEIGHBOURHOOD')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-#                  x='NEIGHBOURHOOD', y='COUNTING')
-
-#     fig.update_layout(main_config, height=200,
-#                       template=template, xaxis_title=None)
-
-#     return fig
+    return fig_estacoes

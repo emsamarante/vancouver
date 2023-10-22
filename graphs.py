@@ -133,3 +133,11 @@ fig_comparison.add_annotation(text=f'{bairro2} mais barato',
                               x=0.5, y=0.25, showarrow=False)
 # Definindo o texto
 text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
+
+# Criando gráfico estacoes ==========================================
+df = pd.DataFrame(df_store)
+
+fig_estacoes = px.bar(df.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
+                      x='SEASON', y='COUNTING')
+
+fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
