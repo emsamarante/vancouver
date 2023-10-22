@@ -102,33 +102,34 @@ df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
 
 del df_bairro1
 
-fig = go.Figure()
+fig_comparison = go.Figure()
 # Toda linha
-fig.add_scattergl(name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
+fig_comparison.add_scattergl(
+    name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
 # Abaixo de zero
-fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
+fig_comparison.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
     df_final['COUNTING'] > 0.00000))
 # Updates
-fig.update_layout(main_config, height=180)
+fig_comparison.update_layout(main_config, height=180)
 # fig.update_yaxes(range = [-0.7,0.7])
 # Annotations pra mostrar quem é o mais barato
-fig.add_annotation(text=f'{bairro2} mais barato',
-                   xref="paper", yref="paper",
-                   font=dict(
-                        family="Courier New, monospace",
-                        size=12,
-                        color="#ffffff"
-                   ),
-                   align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                   x=0.5, y=0.75, showarrow=False)
-fig.add_annotation(text=f'{bairro2} mais barato',
-                   xref="paper", yref="paper",
-                   font=dict(
-                        family="Courier New, monospace",
-                        size=12,
-                        color="#ffffff"
-                   ),
-                   align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                   x=0.5, y=0.25, showarrow=False)
+fig_comparison.add_annotation(text=f'{bairro2} mais barato',
+                              xref="paper", yref="paper",
+                              font=dict(
+                                  family="Courier New, monospace",
+                                  size=12,
+                                  color="#ffffff"
+                              ),
+                              align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                              x=0.5, y=0.75, showarrow=False)
+fig_comparison.add_annotation(text=f'{bairro2} mais barato',
+                              xref="paper", yref="paper",
+                              font=dict(
+                                  family="Courier New, monospace",
+                                  size=12,
+                                  color="#ffffff"
+                              ),
+                              align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                              x=0.5, y=0.25, showarrow=False)
 # Definindo o texto
 text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"

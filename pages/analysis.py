@@ -226,8 +226,17 @@ layout = dbc.Container(children=[
                     ], className='g-2 my-auto'),
                     dbc.Row([
                         dbc.Col([
-                            CARD("Direct Comparisson",
-                                 "id-graph-comparison", lg=12),
+                            dbc.Card([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        dbc.Col([
+                                            html.H5("Direct Comparison"),
+                                            dcc.Graph(id="id-graph-comparison", config=config_graph, figure=fig_comparison)], lg=12),
+                                    ])
+                                ])
+                            ], style=tab_card),
+                            # CARD("Direct Comparisson",
+                            #      "id-graph-comparison", lg=12),
                             html.P(id='desc_comparison', style={
                                    'color': 'gray', 'font-size': '80%'}),
                         ], lg=12)
