@@ -57,19 +57,14 @@ df['SEASON'] = df['DATA'].apply(estacao_do_ano)
 # To dict - para salvar no dcc.store
 df_store = df.to_dict()
 df = pd.DataFrame(df_store)
-aux = df.groupby(['TYPE', 'NEIGHBOURHOOD']).count()[
+aux = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).count()[
     'DAY'].reset_index().rename(columns={'DAY': 'COUNTING'})
 
 aux = aux.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
                       ascending=False).reset_index()
-aux1 = aux.copy()
-aux1['NEIGHBOURHOOD'] = np.where(
-    aux1.loc[:, "COUNTING"] < aux1.at[aux1.index[4], "COUNTING"], "Others Neighbourhoods", aux1['NEIGHBOURHOOD'])
 
-aux1 = aux1.groupby(['TYPE', 'NEIGHBOURHOOD'])['COUNTING'].sum(
-).reset_index().sort_values(['COUNTING'])
 
 # fig_bar = px.pie(aux, values='COUNTING', names='NEIGHBOURHOOD', title=None)
-fig_bar = px.bar(aux1, x='COUNTING', y='NEIGHBOURHOOD', title=None)
+fig_bar = px.bar(aux, x='COUNTING', y='NEIGHBOURHOOD', title=None)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None)
