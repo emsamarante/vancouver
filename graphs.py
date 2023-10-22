@@ -57,6 +57,9 @@ df['SEASON'] = df['DATA'].apply(estacao_do_ano)
 # To dict - para salvar no dcc.store
 df_store = df.to_dict()
 df = pd.DataFrame(df_store)
+
+
+# Criando gráfico de barra
 aux = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).count()[
     'DAY'].reset_index().rename(columns={'DAY': 'COUNTING'})
 
@@ -64,7 +67,6 @@ aux = aux.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
                       ascending=False).reset_index()
 
 
-# fig_bar = px.pie(aux, values='COUNTING', names='NEIGHBOURHOOD', title=None)
 fig_bar = px.bar(aux, x='COUNTING', y='NEIGHBOURHOOD', title=None)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None)
