@@ -28,11 +28,13 @@ url_theme1 = dbc.themes.COSMO
 url_theme2 = dbc.themes.SOLAR
 
 # ================================ data
-df = pd.read_csv("data/dataset.csv", index_col=0)
+df0 = pd.read_csv("data/dataset.csv", index_col=0)
 datetime_series = pd.to_datetime(
-    df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']])
-df['DATA'] = datetime_series
-df.dropna(subset=['NEIGHBOURHOOD'], inplace=True)
+    df0[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']])
+df0['DATA'] = datetime_series
+
+del datetime_series
+df0.dropna(subset=['NEIGHBOURHOOD'], inplace=True)
 
 
 def estacao_do_ano(data):
@@ -52,10 +54,10 @@ def estacao_do_ano(data):
 
 
 # Aplicar a função para criar uma nova coluna 'estacao'
-df['SEASON'] = df['DATA'].apply(estacao_do_ano)
+df0['SEASON'] = df0['DATA'].apply(estacao_do_ano)
 
 # To dict - para salvar no dcc.store
-df_store = df.to_dict()
+df_store = df0.to_dict()
 df = pd.DataFrame(df_store)
 
 
@@ -100,7 +102,7 @@ df_final = pd.DataFrame()
 df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
 df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
 
-del df_bairro1
+del df_bairro1, df_bairro2, df1, df2
 
 fig_comparison = go.Figure()
 # Toda linha
@@ -143,13 +145,13 @@ fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
 
 # Criando gráfico período ===========================================
 df = pd.DataFrame(df_store)
-df['PERIOD'] = None
+df.loc[:, 'PERIOD'] = None
 df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
 df_crimes = df.groupby(['PERIOD', 'TYPE'])['DAY'].count(
 ).reset_index().rename(columns={'DAY': 'COUNTING'})
 
 
-fig_periodo = px.bar(df_crimes,
-                     x='PERIOD', y='COUNTING')
+fig_periodo = px.pie(df_crimes,
+                     names='PERIOD', values='COUNTING', color='PERIOD')
 
 fig_periodo.update_layout(main_config, height=200)

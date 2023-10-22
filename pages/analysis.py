@@ -27,60 +27,37 @@ texto_project_2 = """In this project I analyse data of crimes in Vancouver and s
 by four screens: """
 
 
-config_graph = {"displayModeBar": False, "showTips": False}
-tab_card = {'height': '100%'}
-main_config = {
-    "hovermode": "x unified",
-    "legend": {"yanchor": "top",
-               "y": 0.9,
-               "xanchor": "left",
-               "x": 0.1,
-               "title": {"text": None},
-               "font": {"color": "white"},
-               "bgcolor": "rgba(0,0,0,0.5)"},
-    "margin": {"l": 0, "r": 0, "t": 10, "b": 0}
-}
-months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, ' June': 6, 'July': 7, 'August': 8, 'September': 9,
-          'October': 10, 'November': 11, 'December': 12}
+# # ================================ data
+# df = pd.read_csv("data/dataset.csv", index_col=0)
+# datetime_series = pd.to_datetime(
+#     df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']])
+# df['DATA'] = datetime_series
+# df.dropna(subset=['NEIGHBOURHOOD'], inplace=True)
 
 
-template_theme1 = "cosmo"
-template_theme2 = "solar"
-url_theme1 = dbc.themes.COSMO
-url_theme2 = dbc.themes.SOLAR
+# def estacao_do_ano(data):
+#     import datetime
+#     month = data.month
+#     day = data.day
+#     year = data.year
+
+#     if (datetime.date(year, month, day) >= datetime.date(year, 3, 20)) and (datetime.date(year, month, day) < datetime.date(year, 6, 21)):
+#         return 'Spring'
+#     elif (datetime.date(year, month, day) >= datetime.date(year, 6, 21)) and (datetime.date(year, month, day) < datetime.date(year, 9, 23)):
+#         return 'Summer'
+#     elif (datetime.date(year, month, day) >= datetime.date(year, 9, 23)) and (datetime.date(year, month, day) < datetime.date(year, 12, 21)):
+#         return 'Autumn'
+#     else:
+#         return 'Winter'
 
 
-# ================================ data
-df = pd.read_csv("data/dataset.csv", index_col=0)
-datetime_series = pd.to_datetime(
-    df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']])
-df['DATA'] = datetime_series
-df.dropna(subset=['NEIGHBOURHOOD'], inplace=True)
+# # Aplicar a função para criar uma nova coluna 'estacao'
+# df['SEASON'] = df['DATA'].apply(estacao_do_ano)
 
 
-def estacao_do_ano(data):
-    import datetime
-    month = data.month
-    day = data.day
-    year = data.year
-
-    if (datetime.date(year, month, day) >= datetime.date(year, 3, 20)) and (datetime.date(year, month, day) < datetime.date(year, 6, 21)):
-        return 'Spring'
-    elif (datetime.date(year, month, day) >= datetime.date(year, 6, 21)) and (datetime.date(year, month, day) < datetime.date(year, 9, 23)):
-        return 'Summer'
-    elif (datetime.date(year, month, day) >= datetime.date(year, 9, 23)) and (datetime.date(year, month, day) < datetime.date(year, 12, 21)):
-        return 'Autumn'
-    else:
-        return 'Winter'
-
-
-# Aplicar a função para criar uma nova coluna 'estacao'
-df['SEASON'] = df['DATA'].apply(estacao_do_ano)
-
-
-# To dict - para salvar no dcc.store
-df_store = df.to_dict()
-figure = None
+# # To dict - para salvar no dcc.store
+# df_store = df.to_dict()
+# figure = None
 
 
 def CARD(title, id, sm=6, lg=4, md=4, config=config_graph, style=tab_card):
@@ -106,11 +83,20 @@ def make_tooltip(text, target):
 layout = dbc.Container(children=[
     # Armazenamento de dataset
     dcc.Store(id='dataset', data=df_store),
-    dcc.Store(id='dataset-fixed', data=df_store),
+    # dcc.Store(id='dataset-fixed', data=df_store),
     dcc.Store(id='controller', data={'play': False}),
     dbc.Row([
         dbc.Col([
             dbc.Row([
+                dbc.Col([
+                    dcc.Dropdown(
+                        id="drop-month-1",
+                        value=4,
+                        options=[{'label': key, 'value': value}
+                                 for key, value in zip(months.keys(), months.values())],
+                        clearable=False
+                    ),
+                ], lg=3),
                 dbc.Col([
                     dcc.Dropdown(
                         id="drop-year-1",
@@ -119,15 +105,6 @@ layout = dbc.Container(children=[
                                  for i in df.YEAR.unique()],
                         clearable=False
                     ),
-                ], lg=3),
-                dbc.Col([
-                    dcc.Dropdown(
-                        id="drop-month-1",
-                        value=4,
-                        options=[{'label': key, 'value': value}
-                                 for key, value in zip(months.keys(), months.values())],
-                        clearable=False
-                    )
                 ], lg=3),
                 dbc.Col([
                     dcc.Dropdown(
@@ -200,13 +177,6 @@ layout = dbc.Container(children=[
                 ], lg=6),
                 dbc.Col([
                     dbc.Row([
-                        # dbc.Col([
-                        #     dcc.Dropdown(
-                        #         id="drop-crime-4",
-                        #         value="Theft from Vehicle",
-                        #         options=[{'label':i, "value":i} for i in df.TYPE.unique()],
-                        #     )
-                        # ],lg=4),
                         dbc.Col([
                             dcc.Dropdown(
                                 id="drop-bairro-1",
@@ -256,20 +226,20 @@ layout = dbc.Container(children=[
                             ])
                         ], style=tab_card),
                         # CARD("Análise por estações", "id-estacao-graph", lg=12),
-                    ], lg=10),
+                    ], lg=8),
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
                             dbc.Row([
                                     dbc.Col([
                                         html.H5("Análise por periodo"),
-                                        dcc.Graph(id="id-period", config=config_graph, figure=fig_periodo)], lg=12),
+                                        dcc.Graph(id="id-periodo", config=config_graph, figure=fig_periodo)], lg=12),
                                     ])
                         ])
                     ], style=tab_card),
 
                     # CARD("Análise por período", "id-periodo", lg=12)
-                ], lg=2)
+                ], lg=4)
             ], className='g-2 my-auto')
 
         ], className='g-2 my-auto'),])
@@ -278,89 +248,91 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
-# # ====================== CARD indicador 1
-# @app.callback(
-#     Output('id-card-indicator-2', 'figure'),
-#     [Input('dataset', 'data'),
-#      Input('drop-month-1', 'value'),
-#      Input('drop-crime-1', 'value'),
-#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# @cache.memoize(timeout=180)  # in seconds
-# def update_graph(data, month, crime_selected, toggle):
-#     template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     year = 2022
-#     datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
-#         columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
-#     df.loc[:, 'DATE'] = datetime_series
-#     df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
-#         'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
-#     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
-#         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
-#     # Limpando as variáveis"
-#     del df
-#     del datetime_series
+# ====================== CARD indicador 1
+@app.callback(
+    Output('id-card-indicator-2', 'figure'),
+    [Input('dataset', 'data'),
+     Input('drop-month-1', 'value'),
+     Input('drop-crime-1', 'value'),
+     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+@cache.memoize(timeout=10)  # in seconds
+def update_graph(data, month, crime_selected, toggle):
+    # template = template_theme1 if toggle else template_theme2
+    df = pd.DataFrame(data)
+    year = 2022
+    datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
+        columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
+    df.loc[:, 'DATE'] = datetime_series
+    df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
+        'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
+    dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
+        (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
+    # Limpando as variáveis"
+    del df
 
-#     dff = dff.drop(['YEAR', 'MONTH'], axis=1)
-#     for crime in df_crimes.TYPE.unique():
-#         for date in dff.DATE.unique():
-#             if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
-#                 dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
-#     dff['COUNTING'] = dff['COUNTING'].astype(int)
-#     df_filtered = dff[dff.TYPE.isin([crime_selected])]
-#     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-#     fig = go.Figure()
-#     fig.add_trace(go.Indicator(
-#         mode="number+delta",
-#         title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-#         number={'valueformat': '.0f', 'font': {'size': 60}},
-#         delta={'relative': True, 'valueformat': '.1%',
-#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
-#     ))
-#     fig = go.Figure(go.Indicator(
-#         mode="number+delta",
-#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-#         title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:0.5em'>{year} - {year-1}</span>"},
-#         delta={'relative': True, 'valueformat': '.1%',
-#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
-#         domain={'x': [0, 1], 'y': [0.05, 0.7]}
-#     ))
-#     fig.update_layout(main_config, height=170, template=template)
-#     return fig
+    dff = dff.drop(['YEAR', 'MONTH'], axis=1)
+    for crime in df_crimes.TYPE.unique():
+        for date in dff.DATE.unique():
+            if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
+                dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
+    dff['COUNTING'] = dff['COUNTING'].astype(int)
+    df_filtered = dff[dff.TYPE.isin([crime_selected])]
+
+# Limpando as variáveis"
+    del dff
+
+    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
+    fig = go.Figure()
+    fig.add_trace(go.Indicator(
+        mode="number+delta",
+        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+        number={'valueformat': '.0f', 'font': {'size': 60}},
+        delta={'relative': True, 'valueformat': '.1%',
+               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
+    ))
+    fig = go.Figure(go.Indicator(
+        mode="number+delta",
+        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:0.5em'>{year} - {year-1}</span>"},
+        delta={'relative': True, 'valueformat': '.1%',
+               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
+        domain={'x': [0, 1], 'y': [0.05, 0.7]}
+    ))
+    fig.update_layout(main_config, height=170)
+    del df_filtered
+    return fig
 # # def update_graph(data, month, crime_selected, toggle):
 # #     pass
 
 
-# # ====================== CARD indicador 2
-# @app.callback(
-#     Output('id-card-indicator-1', 'figure'),
-#     [Input('dataset', 'data'),
-#      Input('drop-year-1', 'value'),
-#      Input('drop-crime-1', 'value'),
-#      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# def update_graph(data, year, crime, toggle):
-#     template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     dff = df[df['TYPE'] == crime]
-#     aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
-#         columns={'DAY': 'COUNTING'})
-#     fig_indicator = go.Figure()
-#     fig_indicator.add_trace(go.Indicator(
-#         mode="number+delta",
-#         title={"text": f"<span style='font-size:1em'>{year} - {year-1}</span>"},
-#         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
-#         number={'valueformat': '.0f', 'font': {'size': 60}},
-#         delta={'relative': True, 'valueformat': '.1%',
-#                'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]}
-#     ))
-#     del aux
-#     fig_indicator.update_layout(main_config, height=170, template=template)
-#     return fig_indicator
-# # def update_graph(data, year, crime, toggle):
-# #     pass
+# ====================== CARD indicador 2
+@app.callback(
+    Output('id-card-indicator-1', 'figure'),
+    [Input('dataset', 'data'),
+     Input('drop-year-1', 'value'),
+     Input('drop-crime-1', 'value'),
+     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+def update_graph(data, year, crime, toggle):
+    template = template_theme1 if toggle else template_theme2
+    df = pd.DataFrame(data)
+    dff = df[df['TYPE'] == crime]
+    aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
+        columns={'DAY': 'COUNTING'})
+    fig_indicator = go.Figure()
+    fig_indicator.add_trace(go.Indicator(
+        mode="number+delta",
+        title={"text": f"<span style='font-size:1em'>{year} - {year-1}</span>"},
+        value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
+        number={'valueformat': '.0f', 'font': {'size': 60}},
+        delta={'relative': True, 'valueformat': '.1%',
+               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]}
+    ))
+    del aux, dff, df
+    fig_indicator.update_layout(main_config, height=170, template=template)
+    return fig_indicator
 
 
 @app.callback(
@@ -369,25 +341,22 @@ layout = dbc.Container(children=[
      Input('drop-crime-1', 'value'),]
 )
 def update_graph(year, crime):
-    start = time.time()
     # template = template_theme1 if toggle else template_theme2
 
     dff = aux[(aux.TYPE.isin([crime])) & (aux.YEAR.isin([year]))]
 
-    aux1 = dff.copy()
-    aux1['NEIGHBOURHOOD'] = np.where(
-        aux1.loc[:, "COUNTING"] < aux1.at[aux1.index[4], "COUNTING"], "Others Neighbourhoods", aux1['NEIGHBOURHOOD'])
+    dff['NEIGHBOURHOOD'] = np.where(
+        dff.loc[:, "COUNTING"] < dff.at[dff.index[4], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
-    aux1 = aux1.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['COUNTING'].sum(
+    dff = dff.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['COUNTING'].sum(
     ).reset_index().sort_values(['COUNTING'])
 
-    fig_bar = px.bar(aux1, x='COUNTING', y='NEIGHBOURHOOD', title=None)
+    fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD', title=None)
     fig_bar.update_layout(main_config, height=170,
                           yaxis_title=None)
 
-    end = time.time()
-    elapsed = end - start
-    print(elapsed)
+    del dff
+
     return fig_bar
 
 # # ====================== Grafico de linha
@@ -397,7 +366,7 @@ def update_graph(year, crime):
     Output("id-graph-line-1", 'figure'),
     [Input('drop-crime-3', 'value'),]
 )
-@cache.memoize(timeout=180)  # in seconds
+@cache.memoize(timeout=10)  # in seconds
 def update_graph(crimes):
     # template = template_theme1 if toggle else template_theme2
     if crimes is []:
@@ -406,11 +375,12 @@ def update_graph(crimes):
     else:
 
         mask = aux_multi.TYPE.isin(crimes)
-        fig = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
-                      color='TYPE')
+        fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
+                                  color='TYPE')
         # updates
-        fig.update_layout(main_config, height=230, xaxis_title=None)
-        return fig
+        fig_multilinhas.update_layout(
+            main_config, height=230, xaxis_title=None)
+        return fig_multilinhas
 # def update_graph(data, crimes, toggle):
 #     pass
 
@@ -420,13 +390,13 @@ def update_graph(crimes):
 @app.callback(
     [Output("id-graph-comparison", 'figure'),
      Output('desc_comparison', 'children')],
-    [Input('dataset-fixed', 'data'),
+    [Input('dataset', 'data'),
      Input('drop-crime-1', 'value'),
      Input('drop-bairro-1', 'value'),
      Input('drop-bairro-2', 'value'),
      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-@cache.memoize(timeout=180)  # in seconds
+@cache.memoize(timeout=10)  # in seconds
 def update_graph(data, crime, bairro1, bairro2, toggle):
 
     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
@@ -441,7 +411,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
     df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
     df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
 
-    del df_bairro1
+    del df1, df2, df_bairro1, df_bairro2
 
     fig = go.Figure()
     # Toda linha
@@ -450,6 +420,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
         df_final['COUNTING'] > 0.00000))
     # Updates
+    del df_final
     fig.update_layout(main_config, height=180)
     # fig.update_yaxes(range = [-0.7,0.7])
     # Annotations pra mostrar quem é o mais barato
@@ -474,8 +445,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
     # Definindo o texto
     text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
     return [fig, text_comparison]
-# # def update_graph(data, crime, bairro1, bairro2, toggle):
-# #     pass
+
 
 # #======================= Gráfico Periodo
 
@@ -489,8 +459,8 @@ def update_graph(crime):
     # template = template_theme1 if toggle else template_theme2
 
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
-    fig_periodo = px.bar(aux,
-                         x='PERIOD', y='COUNTING')
+    fig_periodo = px.pie(aux,
+                         names='PERIOD', values='COUNTING', color='PERIOD')
 
     fig_periodo.update_layout(main_config, height=200)
 
@@ -513,3 +483,5 @@ def update_graph(crime, year):
     fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
 
     return fig_estacoes
+
+# Trocar os nomes das variáveis. Cada variável tem que ter um nome único. Depois da ação do callback, fazer a limpeza delas
