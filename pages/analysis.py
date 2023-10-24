@@ -1,6 +1,6 @@
 from dash import html, dcc, Patch
 import dash_bootstrap_components as dbc
-from dash.dependencies import Output, Input
+from dash.dependencies import Output, Input, State
 from dash_bootstrap_templates import ThemeSwitchAIO
 import plotly.graph_objects as go
 import plotly.express as px
@@ -150,7 +150,13 @@ layout = dbc.Container(children=[
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    html.H6("Crime by neighbourhood and type"),
+                                    html.Div([
+                                        html.H6("Crime by neighbourhood and type", style={
+                                                "display": "inline-block"}),
+                                        dbc.Button("More Info", id="open", n_clicks=0, style={
+                                                   "display": "inline-block", "margin-left": "5%"}),
+                                        dbc.ModalBody("Conteúdo do modal")
+                                    ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
                         ])
@@ -167,7 +173,6 @@ layout = dbc.Container(children=[
             dbc.Row([
                 dbc.Col([
                     dbc.Row([
-
                         dcc.Dropdown(
                             id="drop-crime-3",
                             multi=True,
@@ -301,15 +306,6 @@ def update_graph(data, month, crime_selected, toggle):
     del dff
 
     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-    # fig = go.Figure()
-    # # fig.add_trace(go.Indicator(
-    # #     mode="number+delta",
-    # #     title={"text": f"<span style='size:1em'>{crime_selected}</span><br><span style='font-size:0.8em'>{year} - {year-1}</span>"},
-    # #     value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-    # #     number={'valueformat': '.0f', 'font': {'size': 60}},
-    # #     delta={'relative': True, 'valueformat': '.1%',
-    # #            'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
-    # # ))
     fig = go.Figure(go.Indicator(
         mode="number+delta",
         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
