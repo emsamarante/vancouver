@@ -379,6 +379,10 @@ def update_graph(year, crime):
     dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
     aux = dff.copy()
+    average = aux.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
+    ).reset_index().sort_values(['COUNTING'])
+    average_value = average.loc[0, 'COUNTING']
+
     dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
         dff.loc[:, "COUNTING"] < dff.at[dff.index[3], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
@@ -387,6 +391,8 @@ def update_graph(year, crime):
 
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
                      title=None, color='COUNTING', color_continuous_scale="fall")
+    fig_bar.add_vline(x=average_value, line_width=3,
+                      line_dash="dash", line_color="black", label=dict(text=f"Average: {int(average_value)}"))
     fig_bar.update_layout(main_config, height=160,
                           yaxis_title=None, xaxis_title=None)
 
@@ -395,12 +401,16 @@ def update_graph(year, crime):
     others_bairros = list(set(all_bairros).difference(grouped_bairros))
 
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
+
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
                         title=None, color='COUNTING', color_continuous_scale="fall")
     fig_detail.update_layout(main_config, height=350,
                              yaxis_title=None, xaxis_title=None)
+    fig_detail.add_vline(x=average_value, line_width=3,
+                         line_dash="dash", line_color="black", label=dict(text=f"Average: {int(average_value)}"))
 
     text = f"Os bairros são: {others_bairros}"
+    text = None
     # print(text)
 
     del dff
