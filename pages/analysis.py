@@ -91,13 +91,17 @@ layout = dbc.Container(children=[
         dbc.Col([
             dbc.Row([
                 dbc.Col([
-                    dcc.Dropdown(
-                        id="drop-month-1",
-                        value=4,
-                        options=[{'label': key, 'value': value}
-                                 for key, value in zip(months.keys(), months.values())],
-                        clearable=False
-                    ),
+                    html.Div([
+                        "Choose de month",
+                        dcc.Dropdown(
+                            id="drop-month-1",
+                            value=4,
+                            options=[{'label': key, 'value': value}
+                                     for key, value in zip(months.keys(), months.values())],
+                            clearable=False
+                        ),
+                    ])
+
                 ], lg=3),
                 dbc.Col([
                     dcc.Dropdown(
@@ -136,7 +140,7 @@ layout = dbc.Container(children=[
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    html.H6("Crime by neighbourhood"),
+                                    html.H6("Crime by neighbourhood and type"),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
                         ])
@@ -287,22 +291,23 @@ def update_graph(data, month, crime_selected, toggle):
     del dff
 
     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-    fig = go.Figure()
-    fig.add_trace(go.Indicator(
-        mode="number+delta",
-        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-        number={'valueformat': '.0f', 'font': {'size': 60}},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
-    ))
+    # fig = go.Figure()
+    # # fig.add_trace(go.Indicator(
+    # #     mode="number+delta",
+    # #     title={"text": f"<span style='size:1em'>{crime_selected}</span><br><span style='font-size:0.8em'>{year} - {year-1}</span>"},
+    # #     value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+    # #     number={'valueformat': '.0f', 'font': {'size': 60}},
+    # #     delta={'relative': True, 'valueformat': '.1%',
+    # #            'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']}
+    # # ))
     fig = go.Figure(go.Indicator(
         mode="number+delta",
         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-        title={"text": f"<span style='size:60%'>{crime_selected}</span><br><span style='font-size:0.5em'>{year} - {year-1}</span>"},
+        number={'valueformat': '.0f', 'font': {'size': 40}},
+        title={"text": f"<span style='font-size:2em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         delta={'relative': True, 'valueformat': '.1%',
                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
-        domain={'x': [0, 1], 'y': [0.05, 0.7]}
+        domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     fig.update_layout(main_config, height=170)
     del df_filtered
@@ -326,11 +331,12 @@ def update_graph(data, year, crime, toggle):
     fig_indicator = go.Figure()
     fig_indicator.add_trace(go.Indicator(
         mode="number+delta",
-        title={"text": f"<span style='font-size:1em'>{year} - {year-1}</span>"},
+        title={"text": f"<span style='font-size:2em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
-        number={'valueformat': '.0f', 'font': {'size': 60}},
+        number={'valueformat': '.0f', 'font': {'size': 40}},
         delta={'relative': True, 'valueformat': '.1%',
-               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]}
+               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]},
+        domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     del aux, dff, df
     fig_indicator.update_layout(main_config, height=170, template=template)
