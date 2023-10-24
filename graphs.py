@@ -62,14 +62,14 @@ df = pd.DataFrame(df_store)
 
 
 # Criando gráfico de barra ===========================================
-aux = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).count()[
+aux_bar = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).count()[
     'DAY'].reset_index().rename(columns={'DAY': 'COUNTING'})
 
-aux = aux.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
-                      ascending=False).reset_index()
+aux_bar = aux_bar.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
+                              ascending=False).reset_index()
 
 
-fig_bar = px.bar(aux, x='COUNTING', y='NEIGHBOURHOOD', title=None)
+fig_bar = px.bar(aux_bar, x='COUNTING', y='NEIGHBOURHOOD', title=None)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None)
 
@@ -84,57 +84,9 @@ fig_multilinhas.update_layout(main_config, height=230, xaxis_title=None)
 
 
 # Criando gráfico comparison ==========================================
-df = pd.DataFrame(df_store)
-crime = "Other Theft"
-year = 2020
-bairro1 = "Fairview"
-bairro2 = "Strathcona"
-
-df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
-df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
-df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
-    'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
-    'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
-df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
-df_final = pd.DataFrame()
-df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
-df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
-
-del df_bairro1, df_bairro2, df1, df2
-
-fig_comparison = go.Figure()
-# Toda linha
-fig_comparison.add_scattergl(
-    name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
-# Abaixo de zero
-fig_comparison.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-    df_final['COUNTING'] > 0.00000))
-# Updates
-fig_comparison.update_layout(main_config, height=180)
-# fig.update_yaxes(range = [-0.7,0.7])
-# Annotations pra mostrar quem é o mais barato
-fig_comparison.add_annotation(text=f'{bairro2} mais barato',
-                              xref="paper", yref="paper",
-                              font=dict(
-                                  family="Courier New, monospace",
-                                  size=12,
-                                  color="#ffffff"
-                              ),
-                              align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                              x=0.5, y=0.75, showarrow=False)
-fig_comparison.add_annotation(text=f'{bairro2} mais barato',
-                              xref="paper", yref="paper",
-                              font=dict(
-                                  family="Courier New, monospace",
-                                  size=12,
-                                  color="#ffffff"
-                              ),
-                              align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                              x=0.5, y=0.25, showarrow=False)
-# Definindo o texto
-text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
+#
+#
+#
 
 # Criando gráfico estacoes ==========================================
 df = pd.DataFrame(df_store)

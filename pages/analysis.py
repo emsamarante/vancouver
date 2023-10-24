@@ -7,6 +7,8 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from graphs import *
+# from graphs import aux_bar
+
 import time
 
 from app import *
@@ -201,7 +203,7 @@ layout = dbc.Container(children=[
                                     dbc.Row([
                                         dbc.Col([
                                             html.H5("Direct Comparison"),
-                                            dcc.Graph(id="id-graph-comparison", config=config_graph, figure=fig_comparison)], lg=12),
+                                            dcc.Graph(id="id-graph-comparison", config=config_graph)], lg=12),
                                     ])
                                 ])
                             ], style=tab_card),
@@ -226,7 +228,7 @@ layout = dbc.Container(children=[
                             ])
                         ], style=tab_card),
                         # CARD("Análise por estações", "id-estacao-graph", lg=12),
-                    ], lg=8),
+                    ], lg=6),
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
@@ -239,7 +241,7 @@ layout = dbc.Container(children=[
                     ], style=tab_card),
 
                     # CARD("Análise por período", "id-periodo", lg=12)
-                ], lg=4)
+                ], lg=6)
             ], className='g-2 my-auto')
 
         ], className='g-2 my-auto'),])
@@ -303,8 +305,6 @@ def update_graph(data, month, crime_selected, toggle):
     fig.update_layout(main_config, height=170)
     del df_filtered
     return fig
-# # def update_graph(data, month, crime_selected, toggle):
-# #     pass
 
 
 # ====================== CARD indicador 2
@@ -343,17 +343,18 @@ def update_graph(data, year, crime, toggle):
 def update_graph(year, crime):
     # template = template_theme1 if toggle else template_theme2
 
-    dff = aux[(aux.TYPE.isin([crime])) & (aux.YEAR.isin([year]))]
+    dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
-    dff['NEIGHBOURHOOD'] = np.where(
+    dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
         dff.loc[:, "COUNTING"] < dff.at[dff.index[4], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
     dff = dff.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['COUNTING'].sum(
     ).reset_index().sort_values(['COUNTING'])
 
-    fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD', title=None)
+    fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
+                     title=None, color='COUNTING', color_continuous_scale="fall")
     fig_bar.update_layout(main_config, height=170,
-                          yaxis_title=None)
+                          yaxis_title=None, xaxis_title=None)
 
     del dff
 
@@ -376,13 +377,15 @@ def update_graph(crimes):
 
         mask = aux_multi.TYPE.isin(crimes)
         fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
-                                  color='TYPE')
+                                  color='TYPE',
+                                  color_discrete_sequence=["#3F5A42", "#818F6E", "#8F9B78", "#B4B890", "#CECDA2", "#F4EBBB",
+                                                           "#F3DCAC", "#F1CE9E", "#E7A575", "#E9AB7B", "#E09161"])
         # updates
         fig_multilinhas.update_layout(
-            main_config, height=230, xaxis_title=None)
+            main_config, height=250, xaxis_title=None, yaxis_title=None)
+
+        del mask
         return fig_multilinhas
-# def update_graph(data, crimes, toggle):
-#     pass
 
 # # ======================= Grafico comparacao
 
@@ -415,16 +418,17 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
 
     fig = go.Figure()
     # Toda linha
-    fig.add_scattergl(name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'])
+    fig.add_scattergl(
+        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'], line=dict(color='#3D5941'))
     # Abaixo de zero
     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-        df_final['COUNTING'] > 0.00000))
+        df_final['COUNTING'] > 0.00000), line=dict(color='#CA562C'))
     # Updates
     del df_final
-    fig.update_layout(main_config, height=180)
+    fig.update_layout(main_config, height=165)
     # fig.update_yaxes(range = [-0.7,0.7])
     # Annotations pra mostrar quem é o mais barato
-    fig.add_annotation(text=f'{bairro2} mais barato',
+    fig.add_annotation(text=f'{bairro1} had more crimes',
                        xref="paper", yref="paper",
                        font=dict(
                            family="Courier New, monospace",
@@ -433,7 +437,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
                        ),
                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                        x=0.5, y=0.75, showarrow=False)
-    fig.add_annotation(text=f'{bairro2} mais barato',
+    fig.add_annotation(text=f'{bairro2} had more crimes',
                        xref="paper", yref="paper",
                        font=dict(
                            family="Courier New, monospace",
@@ -443,7 +447,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                        x=0.5, y=0.25, showarrow=False)
     # Definindo o texto
-    text_comparison = f"Comparando {bairro2} e {bairro1}. Se a linha estiver acima do eixo X, {bairro2} tinha menor preço, do contrário, {bairro1} tinha um valor inferior"
+    text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x axis, {bairro2} had a less criminal event selected, otherwise, {bairro1} had the smallest value."
     return [fig, text_comparison]
 
 
@@ -460,7 +464,7 @@ def update_graph(crime):
 
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
     fig_periodo = px.pie(aux,
-                         names='PERIOD', values='COUNTING', color='PERIOD')
+                         names='PERIOD', values='COUNTING', color='COUNTING', color_discrete_sequence=['#3D5941', '#CA562C'])
 
     fig_periodo.update_layout(main_config, height=200)
 
@@ -478,9 +482,10 @@ def update_graph(crime, year):
     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
     fig_estacoes = px.bar(dff.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                          x='SEASON', y='COUNTING')
+                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale='fall')
 
-    fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
+    fig_estacoes.update_layout(
+        main_config, height=200, xaxis_title=None, yaxis_title=None)
 
     return fig_estacoes
 
