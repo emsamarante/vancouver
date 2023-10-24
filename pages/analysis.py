@@ -365,6 +365,7 @@ def update_graph(year, crime):
 
     dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
+    aux = dff.copy()
     dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
         dff.loc[:, "COUNTING"] < dff.at[dff.index[4], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
@@ -375,7 +376,11 @@ def update_graph(year, crime):
                      title=None, color='COUNTING', color_continuous_scale="fall")
     fig_bar.update_layout(main_config, height=170,
                           yaxis_title=None, xaxis_title=None)
-    text = "Os bairros são:"
+
+    all_bairros = aux.NEIGHBOURHOOD.unique().tolist()
+    grouped_bairros = dff.NEIGHBOURHOOD.unique().tolist()
+    others_bairros = list(set(all_bairros).difference(grouped_bairros))
+    text = f"Os bairros são: {others_bairros}"
 
     del dff
 
