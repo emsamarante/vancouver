@@ -67,7 +67,7 @@ def CARD(title, id, sm=6, lg=4, md=4, config=config_graph, style=tab_card):
         dbc.CardBody([
             dbc.Row([
                 dbc.Col([
-                    html.H5(title),
+                    html.H6(title),
                     dcc.Graph(id=id, config=config)], sm=sm, md=md, lg=lg),
             ])
         ])
@@ -120,13 +120,14 @@ layout = dbc.Container(children=[
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
                 dbc.Col([
-                    CARD("Total of Crimes by month",
+                    CARD("Amount of crimes by month and type",
                          "id-card-indicator-2", lg=12),
                     make_tooltip(
                         "Comparison with previous year by type of crime", "id-card-indicator-2")
                 ], lg=3),
                 dbc.Col([
-                    CARD("Total of Crimes", "id-card-indicator-1", lg=12),
+                    CARD("Amount of crimes by year and type",
+                         "id-card-indicator-1", lg=12),
                     make_tooltip("Comparison with previous year",
                                  "id-card-indicator-1")
                 ], lg=3),
@@ -135,7 +136,7 @@ layout = dbc.Container(children=[
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    html.H5("Crime by neighbourhood"),
+                                    html.H6("Crime by neighbourhood"),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
                         ])
@@ -152,6 +153,7 @@ layout = dbc.Container(children=[
             dbc.Row([
                 dbc.Col([
                     dbc.Row([
+
                         dcc.Dropdown(
                             id="drop-crime-3",
                             multi=True,
@@ -166,7 +168,7 @@ layout = dbc.Container(children=[
                                 dbc.CardBody([
                                     dbc.Row([
                                         dbc.Col([
-                                            html.H5("Crimes Over Year"),
+                                            html.H6("Crimes Over Year"),
                                             dcc.Graph(id="id-graph-line-1", config=config_graph, figure=fig_multilinhas)], lg=12),
                                     ])
                                 ])
@@ -202,7 +204,7 @@ layout = dbc.Container(children=[
                                 dbc.CardBody([
                                     dbc.Row([
                                         dbc.Col([
-                                            html.H5("Direct Comparison"),
+                                            html.H6("Direct Comparison"),
                                             dcc.Graph(id="id-graph-comparison", config=config_graph)], lg=12),
                                     ])
                                 ])
@@ -214,7 +216,7 @@ layout = dbc.Container(children=[
                         ], lg=12)
                     ], className='g-2 my-auto',)
                 ], lg=6)
-            ], className='g-2 my-auto',),
+            ], className='g-2 my-auto'),
             dbc.Row([
                 dbc.Col(
                     [
@@ -222,7 +224,7 @@ layout = dbc.Container(children=[
                             dbc.CardBody([
                                 dbc.Row([
                                     dbc.Col([
-                                        html.H5("Análise por estações"),
+                                        html.H6("Analysis by season"),
                                         dcc.Graph(id="id-estacao-graph", config=config_graph, figure=fig_estacoes)], lg=12),
                                 ])
                             ])
@@ -234,7 +236,7 @@ layout = dbc.Container(children=[
                         dbc.CardBody([
                             dbc.Row([
                                     dbc.Col([
-                                        html.H5("Análise por periodo"),
+                                        html.H6("Analysis by period of day"),
                                         dcc.Graph(id="id-periodo", config=config_graph, figure=fig_periodo)], lg=12),
                                     ])
                         ])
@@ -447,7 +449,7 @@ def update_graph(data, crime, bairro1, bairro2, toggle):
                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                        x=0.5, y=0.25, showarrow=False)
     # Definindo o texto
-    text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x axis, {bairro2} had a less criminal event selected, otherwise, {bairro1} had the smallest value."
+    text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
     return [fig, text_comparison]
 
 
