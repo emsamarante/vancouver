@@ -169,7 +169,10 @@ layout = dbc.Container(children=[
                                                 ),
                                                 dbc.Button(
                                                     "Close", id="close", className="ms-auto", n_clicks=0)
-                                            ], id="modal", is_open=False),
+                                            ],
+                                            id="modal",
+                                            is_open=False,
+                                            size="xl"),
                                     ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
@@ -377,7 +380,7 @@ def update_graph(year, crime):
 
     aux = dff.copy()
     dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
-        dff.loc[:, "COUNTING"] < dff.at[dff.index[4], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
+        dff.loc[:, "COUNTING"] < dff.at[dff.index[3], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
     dff = dff.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['COUNTING'].sum(
     ).reset_index().sort_values(['COUNTING'])
@@ -394,7 +397,7 @@ def update_graph(year, crime):
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
                         title=None, color='COUNTING', color_continuous_scale="fall")
-    fig_detail.update_layout(main_config, height=170,
+    fig_detail.update_layout(main_config, height=350,
                              yaxis_title=None, xaxis_title=None)
 
     text = f"Os bairros são: {others_bairros}"
