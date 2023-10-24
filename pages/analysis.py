@@ -153,10 +153,13 @@ layout = dbc.Container(children=[
                                     html.Div([
                                         html.H6("Crime by neighbourhood and type", style={
                                                 "display": "inline-block"}),
-                                        dbc.Button("More Info", id="open", n_clicks=0, style={
-                                                   "display": "inline-block", "margin-left": "5%"}),
+                                        dbc.Button("More Info", id="open", n_clicks=0, className="btn btn-secondary btn-sm",
+                                                   style={"display": "inline-block", "margin-left": "5%"}),
                                         dbc.Modal([
-                                            dbc.ModalBody("Conteúdo do modal")
+                                            dbc.ModalBody(
+                                                html.P(id="body")),
+                                            dbc.Button(
+                                                "Close", id="close", className="ms-auto", n_clicks=0)
                                         ], id="modal", is_open=False),
                                     ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
@@ -352,7 +355,8 @@ def update_graph(data, year, crime, toggle):
 
 
 @app.callback(
-    Output('id-graph-1', 'figure'),
+    [Output('id-graph-1', 'figure'),
+     Output('body', 'children')],
     [Input('drop-year-1', 'value'),
      Input('drop-crime-1', 'value'),]
 )
@@ -371,10 +375,11 @@ def update_graph(year, crime):
                      title=None, color='COUNTING', color_continuous_scale="fall")
     fig_bar.update_layout(main_config, height=170,
                           yaxis_title=None, xaxis_title=None)
+    text = "Os bairros são:"
 
     del dff
 
-    return fig_bar
+    return [fig_bar, text]
 
 # # ====================== Grafico de linha
 
