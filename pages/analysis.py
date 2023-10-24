@@ -155,7 +155,9 @@ layout = dbc.Container(children=[
                                                 "display": "inline-block"}),
                                         dbc.Button("More Info", id="open", n_clicks=0, style={
                                                    "display": "inline-block", "margin-left": "5%"}),
-                                        dbc.ModalBody("Conteúdo do modal")
+                                        dbc.Modal([
+                                            dbc.ModalBody("Conteúdo do modal")
+                                        ]),
                                     ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
