@@ -155,12 +155,15 @@ layout = dbc.Container(children=[
                                                 "display": "inline-block"}),
                                         dbc.Button("More Info", id="open", n_clicks=0, className="btn btn-secondary btn-sm",
                                                    style={"display": "inline-block", "margin-left": "5%"}),
-                                        dbc.Modal([
-                                            dbc.ModalBody(
-                                                html.P(id="body")),
-                                            dbc.Button(
-                                                "Close", id="close", className="ms-auto", n_clicks=0)
-                                        ], id="modal", is_open=False),
+                                        dbc.Modal(
+                                            [
+                                                dbc.ModalHeader(
+                                                    dbc.ModalTitle("Other Neighbourhoods")),
+                                                dbc.ModalBody(
+                                                    html.P(id="body")),
+                                                dbc.Button(
+                                                    "Close", id="close", className="ms-auto", n_clicks=0)
+                                            ], id="modal", is_open=False),
                                     ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
@@ -380,6 +383,7 @@ def update_graph(year, crime):
     all_bairros = aux.NEIGHBOURHOOD.unique().tolist()
     grouped_bairros = dff.NEIGHBOURHOOD.unique().tolist()
     others_bairros = list(set(all_bairros).difference(grouped_bairros))
+
     text = f"Os bairros são: {others_bairros}"
 
     del dff
