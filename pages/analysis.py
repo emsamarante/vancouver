@@ -160,7 +160,13 @@ layout = dbc.Container(children=[
                                                 dbc.ModalHeader(
                                                     dbc.ModalTitle("Other Neighbourhoods")),
                                                 dbc.ModalBody(
-                                                    html.P(id="body")),
+                                                    html.Div(
+                                                        [
+                                                            html.P(id="body"),
+                                                            dcc.Graph(
+                                                                id="id-graph-modal"),
+                                                        ]),
+                                                ),
                                                 dbc.Button(
                                                     "Close", id="close", className="ms-auto", n_clicks=0)
                                             ], id="modal", is_open=False),
@@ -359,7 +365,8 @@ def update_graph(data, year, crime, toggle):
 
 @app.callback(
     [Output('id-graph-1', 'figure'),
-     Output('body', 'children')],
+     Output('body', 'children'),
+     Output('id-graph-modal', 'figure')],
     [Input('drop-year-1', 'value'),
      Input('drop-crime-1', 'value'),]
 )
@@ -384,11 +391,18 @@ def update_graph(year, crime):
     grouped_bairros = dff.NEIGHBOURHOOD.unique().tolist()
     others_bairros = list(set(all_bairros).difference(grouped_bairros))
 
+    mask = aux.NEIGHBOURHOOD.isin(others_bairros)
+    fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
+                        title=None, color='COUNTING', color_continuous_scale="fall")
+    fig_detail.update_layout(main_config, height=170,
+                             yaxis_title=None, xaxis_title=None)
+
     text = f"Os bairros são: {others_bairros}"
+    # print(text)
 
     del dff
 
-    return [fig_bar, text]
+    return [fig_bar, text, fig_detail]
 
 # # ====================== Grafico de linha
 
