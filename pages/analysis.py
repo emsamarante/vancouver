@@ -332,7 +332,7 @@ def update_graph(data, month, crime_selected, toggle):
                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
-    fig.update_layout(main_config, height=170)
+    fig.update_layout(main_config, height=160)
     del df_filtered
     return fig
 
@@ -362,7 +362,7 @@ def update_graph(data, year, crime, toggle):
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     del aux, dff, df
-    fig_indicator.update_layout(main_config, height=170, template=template)
+    fig_indicator.update_layout(main_config, height=160, template=template)
     return fig_indicator
 
 
@@ -387,7 +387,7 @@ def update_graph(year, crime):
 
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
                      title=None, color='COUNTING', color_continuous_scale="fall")
-    fig_bar.update_layout(main_config, height=170,
+    fig_bar.update_layout(main_config, height=160,
                           yaxis_title=None, xaxis_title=None)
 
     all_bairros = aux.NEIGHBOURHOOD.unique().tolist()
@@ -535,8 +535,6 @@ def update_graph(crime, year):
         main_config, height=200, xaxis_title=None, yaxis_title=None)
 
     return fig_estacoes
-
-# Trocar os nomes das variáveis. Cada variável tem que ter um nome único. Depois da ação do callback, fazer a limpeza delas
 
 
 @app.callback(
