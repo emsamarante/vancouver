@@ -92,7 +92,8 @@ layout = dbc.Container(children=[
             dbc.Row([
                 dbc.Col([
                     html.Div([
-                        "Choose de month",
+                        html.Div(["Choose de month",],
+                                 style={"font-size": "80%"}),
                         dcc.Dropdown(
                             id="drop-month-1",
                             value=4,
@@ -101,25 +102,34 @@ layout = dbc.Container(children=[
                             clearable=False
                         ),
                     ])
+                ], lg=3),
+                dbc.Col([
+                    html.Div([
+                        html.Div(["Choose the year"], style={
+                                 "font-size": "80%"}),
+                        dcc.Dropdown(
+                            id="drop-year-1",
+                            value=2020,
+                            options=[{'label': i, 'value': i}
+                                     for i in df.YEAR.unique()],
+                            clearable=False
+                        ),
+                    ])
 
                 ], lg=3),
                 dbc.Col([
-                    dcc.Dropdown(
-                        id="drop-year-1",
-                        value=2020,
-                        options=[{'label': i, 'value': i}
-                                 for i in df.YEAR.unique()],
-                        clearable=False
-                    ),
-                ], lg=3),
-                dbc.Col([
-                    dcc.Dropdown(
-                        id="drop-crime-1",
-                        value="Other Theft",
-                        options=[{'label': i, "value": i}
-                                 for i in df.TYPE.unique()],
-                        clearable=False
-                    )
+                    html.Div([
+                        html.Div(["Choose the crime"],
+                                 style={'font-size': '80%'}),
+                        dcc.Dropdown(
+                            id="drop-crime-1",
+                            value="Other Theft",
+                            options=[{'label': i, "value": i}
+                                     for i in df.TYPE.unique()],
+                            clearable=False
+                        )
+                    ])
+
                 ], lg=6),
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
@@ -304,7 +314,7 @@ def update_graph(data, month, crime_selected, toggle):
         mode="number+delta",
         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
         number={'valueformat': '.0f', 'font': {'size': 40}},
-        title={"text": f"<span style='font-size:2em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+        title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         delta={'relative': True, 'valueformat': '.1%',
                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
@@ -331,7 +341,7 @@ def update_graph(data, year, crime, toggle):
     fig_indicator = go.Figure()
     fig_indicator.add_trace(go.Indicator(
         mode="number+delta",
-        title={"text": f"<span style='font-size:2em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+        title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
         number={'valueformat': '.0f', 'font': {'size': 40}},
         delta={'relative': True, 'valueformat': '.1%',
