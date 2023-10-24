@@ -157,7 +157,7 @@ layout = dbc.Container(children=[
                                                    "display": "inline-block", "margin-left": "5%"}),
                                         dbc.Modal([
                                             dbc.ModalBody("Conteúdo do modal")
-                                        ]),
+                                        ], id="modal", is_open=False),
                                     ]),
                                     dcc.Graph(id="id-graph-1", config=config_graph, figure=fig_bar)], lg=12),
                             ])
@@ -506,3 +506,14 @@ def update_graph(crime, year):
     return fig_estacoes
 
 # Trocar os nomes das variáveis. Cada variável tem que ter um nome único. Depois da ação do callback, fazer a limpeza delas
+
+
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
