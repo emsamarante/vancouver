@@ -12,17 +12,37 @@ import sidebar
 
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@1.0.4/dbc.min.css"
 
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Home", href="#")),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem("More pages", header=True),
+                dbc.DropdownMenuItem("Analysis", href="#"),
+                dbc.DropdownMenuItem("Maps", href="#"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="More",
+        ),
+    ],
+    brand="Criminal events analysis",
+    brand_href="#",
+    color="danger",
+    dark=True,
+)
+
 
 app.layout = dbc.Container(children=[
     dbc.Row([
         dbc.Col([
             dcc.Location(id="url"),
-            sidebar.layout
-        ], sm=4, lg=1),
-
+            navbar
+        ], sm=4, lg=12),], style={"margin-top": "7px"}, className='g2 my-auto'),
+    dbc.Row([
         dbc.Col([
             html.Div(id="page-content")
-        ], sm=8, lg=11,)
+        ], sm=8, lg=12,)
     ], style={"margin-top": "7px"}, className='g2 my-auto')
 ], fluid=True, style={'height': '100%'})
 
