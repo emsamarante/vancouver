@@ -332,7 +332,7 @@ def update_graph(data, month, crime_selected, toggle):
                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
-    fig.update_layout(main_config, height=160)
+    fig.update_layout(main_config, height=160, template=template)
     del df_filtered
     return fig
 
@@ -346,7 +346,7 @@ def update_graph(data, month, crime_selected, toggle):
      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 def update_graph(data, year, crime, toggle):
-    template = template_theme1 if toggle else template_theme2
+    # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
     dff = df[df['TYPE'] == crime]
     aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
@@ -394,7 +394,7 @@ def update_graph(year, crime):
     fig_bar.add_vline(x=average_value, line_width=3,
                       line_dash="dash", line_color="black", label=dict(text=None))
     fig_bar.update_layout(main_config, height=160,
-                          yaxis_title=None, xaxis_title=None)
+                          yaxis_title=None, xaxis_title=None, template=template)
     fig_bar.add_annotation(text=f"Average: {round(average_value,1)}",
                            xref="paper", yref="paper",
                            font=dict(
@@ -414,7 +414,7 @@ def update_graph(year, crime):
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
                         title=None, color='COUNTING', color_continuous_scale="fall")
     fig_detail.update_layout(main_config, height=350,
-                             yaxis_title=None, xaxis_title=None)
+                             yaxis_title=None, xaxis_title=None, template=template)
     fig_detail.add_vline(x=average_value, line_width=3,
                          line_dash="dash", line_color="black", label=dict(text=None))
 

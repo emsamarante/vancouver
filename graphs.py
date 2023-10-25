@@ -1,8 +1,10 @@
 import plotly.express as px
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 import numpy as np
+load_figure_template("journal")
 
 
 config_graph = {"displayModeBar": False, "showTips": False}
@@ -22,10 +24,11 @@ months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, ' June'
           'October': 10, 'November': 11, 'December': 12}
 
 
-template_theme1 = "cosmo"
-template_theme2 = "solar"
-url_theme1 = dbc.themes.COSMO
-url_theme2 = dbc.themes.SOLAR
+template_theme1 = "journal"
+template_theme2 = "journal"
+url_theme1 = dbc.themes.JOURNAL
+url_theme2 = dbc.themes.JOURNAL
+template = 'journal'
 
 # ================================ data
 df0 = pd.read_csv("data/dataset.csv", index_col=0)
@@ -71,7 +74,7 @@ aux_bar = aux_bar.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
 
 fig_bar = px.bar(aux_bar, x='COUNTING', y='NEIGHBOURHOOD', title=None)
 fig_bar.update_layout(main_config, height=170,
-                      yaxis_title=None)
+                      yaxis_title=None, template=template)
 
 # Gráfico multilinhas =================================================
 df = pd.DataFrame(df_store)
@@ -80,7 +83,8 @@ aux_multi = df.groupby(['TYPE', 'YEAR'])['DAY'].count(
 
 fig_multilinhas = px.line(aux_multi, x='YEAR', y='COUNTING',
                           color='TYPE')
-fig_multilinhas.update_layout(main_config, height=230, xaxis_title=None)
+fig_multilinhas.update_layout(
+    main_config, height=230, xaxis_title=None, template=template)
 
 
 # Criando gráfico comparison ==========================================
@@ -106,4 +110,4 @@ df_crimes = df.groupby(['PERIOD', 'TYPE'])['DAY'].count(
 fig_periodo = px.pie(df_crimes,
                      names='PERIOD', values='COUNTING', color='PERIOD')
 
-fig_periodo.update_layout(main_config, height=200)
+fig_periodo.update_layout(main_config, height=200, template=template)
