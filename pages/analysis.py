@@ -1,7 +1,7 @@
 from dash import html, dcc, Patch
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input, State
-from dash_bootstrap_templates import ThemeSwitchAIO
+# from dash_bootstrap_templates import ThemeSwitchAIO
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
@@ -296,11 +296,11 @@ layout = dbc.Container(children=[
     Output('id-card-indicator-2', 'figure'),
     [Input('dataset', 'data'),
      Input('drop-month-1', 'value'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+     Input('drop-crime-1', 'value')]
+    #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 # @cache.memoize(timeout=10)  # in seconds
-def update_graph(data, month, crime_selected, toggle):
+def update_graph(data, month, crime_selected):
     # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
     year = 2022
@@ -345,10 +345,10 @@ def update_graph(data, month, crime_selected, toggle):
     Output('id-card-indicator-1', 'figure'),
     [Input('dataset', 'data'),
      Input('drop-year-1', 'value'),
-     Input('drop-crime-1', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+     Input('drop-crime-1', 'value')]
+    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-def update_graph(data, year, crime, toggle):
+def update_graph(data, year, crime):
     # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
     dff = df[df['TYPE'] == crime]
@@ -476,11 +476,11 @@ def update_graph(crimes):
     [Input('dataset', 'data'),
      Input('drop-crime-1', 'value'),
      Input('drop-bairro-1', 'value'),
-     Input('drop-bairro-2', 'value'),
-     Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+     Input('drop-bairro-2', 'value')]
+    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 # @cache.memoize(timeout=10)  # in seconds
-def update_graph(data, crime, bairro1, bairro2, toggle):
+def update_graph(data, crime, bairro1, bairro2):
 
     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
     df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
