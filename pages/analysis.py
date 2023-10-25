@@ -164,7 +164,7 @@ layout = dbc.Container(children=[
                                                         [
                                                             html.P(id="body"),
                                                             dcc.Graph(
-                                                                id="id-graph-modal"),
+                                                                id="id-graph-modal", style={"margin": "4%"}),
                                                         ]),
                                                 ),
                                                 dbc.Button(
@@ -392,9 +392,18 @@ def update_graph(year, crime):
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
                      title=None, color='COUNTING', color_continuous_scale="fall")
     fig_bar.add_vline(x=average_value, line_width=3,
-                      line_dash="dash", line_color="black", label=dict(text=f"Average: {int(average_value)}"))
+                      line_dash="dash", line_color="black", label=dict(text=None))
     fig_bar.update_layout(main_config, height=160,
                           yaxis_title=None, xaxis_title=None)
+    fig_bar.add_annotation(text=f"Average: {round(average_value,1)}",
+                           xref="paper", yref="paper",
+                           font=dict(
+                               family="Courier New, monospace",
+                               size=12,
+                               color="#ffffff"
+                           ),
+                           align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                           x=0.15, y=0.1, showarrow=False)
 
     all_bairros = aux.NEIGHBOURHOOD.unique().tolist()
     grouped_bairros = dff.NEIGHBOURHOOD.unique().tolist()
@@ -407,7 +416,17 @@ def update_graph(year, crime):
     fig_detail.update_layout(main_config, height=350,
                              yaxis_title=None, xaxis_title=None)
     fig_detail.add_vline(x=average_value, line_width=3,
-                         line_dash="dash", line_color="black", label=dict(text=f"Average: {int(average_value)}"))
+                         line_dash="dash", line_color="black", label=dict(text=None))
+
+    fig_detail.add_annotation(text=f"Average: {round(average_value,1)}",
+                              xref="paper", yref="paper",
+                              font=dict(
+                                  family="Courier New, monospace",
+                                  size=12,
+                                  color="#ffffff"
+                              ),
+                              align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                              x=0.6, y=0.1, showarrow=False)
 
     text = f"Os bairros são: {others_bairros}"
     text = None
