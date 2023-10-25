@@ -14,11 +14,11 @@ import sidebar
 
 navbar = dbc.NavbarSimple(
     children=[
-        dbc.NavItem(dbc.NavLink("Home", href="#")),
+        dbc.NavItem(dbc.NavLink("Home", href="/")),
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Analysis", href="#"),
+                dbc.DropdownMenuItem("Analysis", href="/analysis"),
                 dbc.DropdownMenuItem("Maps", href="#"),
             ],
             nav=True,
@@ -52,17 +52,17 @@ app.layout = dbc.Container(children=[
     [Input("url", "pathname")]
 )
 def render_page_content(pathname):
-    # if pathname == "/":
-    #     return home.layout
-
     if pathname == "/":
-        return analysis.layout
+        return home.layout
+
+    # if pathname == "/":
+    #     return analysis.layout
 
     # if pathname == "/map":
     #     return map.layout
 
-    # if pathname == "/analysis":
-    #     return analysis.layout
+    if pathname == "/analysis":
+        return analysis.layout
 
 
 if __name__ == '__main__':
