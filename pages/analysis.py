@@ -7,6 +7,8 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from graphs import *
+from dash_bootstrap_templates import load_figure_template
+
 # from graphs import aux_bar
 
 import time
@@ -28,6 +30,7 @@ referred to as "hot spots" of crime. """
 texto_project_2 = """In this project I analyse data of crimes in Vancouver and show the results in the attractive way. This dashboard is compound
 by four screens: """
 
+load_figure_template("cyborg")
 
 # # ================================ data
 # df = pd.read_csv("data/dataset.csv", index_col=0)
@@ -296,7 +299,7 @@ layout = dbc.Container(children=[
      Input('drop-crime-1', 'value'),
      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-@cache.memoize(timeout=10)  # in seconds
+# @cache.memoize(timeout=10)  # in seconds
 def update_graph(data, month, crime_selected, toggle):
     # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
@@ -390,7 +393,8 @@ def update_graph(year, crime):
     ).reset_index().sort_values(['COUNTING'])
 
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
-                     title=None, color='COUNTING', color_continuous_scale="fall")
+                     title=None, color='COUNTING')
+    # , color_continuous_scale="fall"
     fig_bar.add_vline(x=average_value, line_width=3,
                       line_dash="dash", line_color="black", label=dict(text=None))
     fig_bar.update_layout(main_config, height=160,
@@ -443,7 +447,7 @@ def update_graph(year, crime):
     Output("id-graph-line-1", 'figure'),
     [Input('drop-crime-3', 'value'),]
 )
-@cache.memoize(timeout=10)  # in seconds
+# @cache.memoize(timeout=10)  # in seconds
 def update_graph(crimes):
     # template = template_theme1 if toggle else template_theme2
     if crimes is []:
@@ -475,7 +479,7 @@ def update_graph(crimes):
      Input('drop-bairro-2', 'value'),
      Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-@cache.memoize(timeout=10)  # in seconds
+# @cache.memoize(timeout=10)  # in seconds
 def update_graph(data, crime, bairro1, bairro2, toggle):
 
     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]

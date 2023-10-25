@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 import numpy as np
-load_figure_template("journal")
+load_figure_template("cyborg")
 
 
 config_graph = {"displayModeBar": False, "showTips": False}
@@ -24,11 +24,11 @@ months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, ' June'
           'October': 10, 'November': 11, 'December': 12}
 
 
-template_theme1 = "journal"
-template_theme2 = "journal"
-url_theme1 = dbc.themes.JOURNAL
-url_theme2 = dbc.themes.JOURNAL
-template = 'journal'
+template_theme1 = "cyborg"
+template_theme2 = "cyborg"
+url_theme1 = dbc.themes.CYBORG
+url_theme2 = dbc.themes.CYBORG
+template = 'cyborg'
 
 # ================================ data
 df0 = pd.read_csv("data/dataset.csv", index_col=0)

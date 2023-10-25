@@ -6,9 +6,9 @@ import os
 
 FONT_AWESOME = ["https://use.fontawesome.com/releases/v5.15.4/css/all.css"]
 
-load_figure_template("journal")
+load_figure_template("cyborg")
 app = dash.Dash(__name__, external_stylesheets=[
-                FONT_AWESOME, dbc.themes.JOURNAL])
+                FONT_AWESOME, dbc.themes.CYBORG])
 
 cache = Cache(app.server, config={
     # try 'filesystem' if you don't want to setup redis
