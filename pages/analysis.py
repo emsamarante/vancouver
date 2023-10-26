@@ -332,7 +332,8 @@ def update_graph(data, month, crime_selected):
         number={'valueformat': '.0f', 'font': {'size': 40}},
         title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING']},
+               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
+               'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     fig.update_layout(main_config, height=160, template=template)
@@ -361,7 +362,8 @@ def update_graph(data, year, crime):
         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
         number={'valueformat': '.0f', 'font': {'size': 40}},
         delta={'relative': True, 'valueformat': '.1%',
-               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0]},
+               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
+               'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     del aux, dff, df
@@ -394,10 +396,14 @@ def update_graph(year, crime):
     ).reset_index().sort_values(['COUNTING'])
 
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
-                     title=None, color='COUNTING')
+                     title=None, color='COUNTING',
+                     color_continuous_scale=colorscale_res)
+    #  color_continuous_scale=[(0.00, "red"),   (0.33, "red"),
+    #                          (0.33, "green"), (0.66, "green"),
+    #                          (0.66, "blue"),  (1.00, "blue")])
     # , color_continuous_scale="fall"
     fig_bar.add_vline(x=average_value, line_width=3,
-                      line_dash="dash", line_color="black", label=dict(text=None))
+                      line_dash="dash", line_color="white", label=dict(text=None))
     fig_bar.update_layout(main_config, height=160,
                           yaxis_title=None, xaxis_title=None, template=template)
     fig_bar.add_annotation(text=f"Average: {round(average_value,1)}",
@@ -416,12 +422,15 @@ def update_graph(year, crime):
 
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
 
+    # print(aux[mask]['COUNTING'].max())
+    # value_max = aux[mask]['COUNTING'].max()
+
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
-                        title=None)
+                        title=None, color='COUNTING', color_continuous_scale=colorscale_res)
     fig_detail.update_layout(main_config, height=350,
-                             yaxis_title=None, xaxis_title=None, template=template)
+                             yaxis_title=None, xaxis_title=None)
     fig_detail.add_vline(x=average_value, line_width=3,
-                         line_dash="dash", line_color="black", label=dict(text=None))
+                         line_dash="dash", line_color="white", label=dict(text=None))
 
     fig_detail.add_annotation(text=f"Average: {round(average_value,1)}",
                               xref="paper", yref="paper",
@@ -432,6 +441,8 @@ def update_graph(year, crime):
                               ),
                               align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                               x=0.6, y=0.1, showarrow=False)
+    # fig_detail.update_traces(marker=dict(
+    #     colorscale=colorscale))
 
     text = f"Os bairros são: {others_bairros}"
     text = None
@@ -567,7 +578,7 @@ def update_graph(crime, year):
     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
     fig_estacoes = px.bar(dff.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                          x='SEASON', y='COUNTING', color='COUNTING', )
+                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
     color_continuous_scale = 'fall'
     fig_estacoes.update_layout(
         main_config, height=200, xaxis_title=None, yaxis_title=None, template=template)

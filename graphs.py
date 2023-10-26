@@ -23,6 +23,22 @@ main_config = {
 months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, ' June': 6, 'July': 7, 'August': 8, 'September': 9,
           'October': 10, 'November': 11, 'December': 12}
 
+red = "#CC0000"
+orange = "#FF8E17"
+green = "#80B912"
+blue = "#2A9FD6"
+
+colorscale_res = [
+    (0, blue),   # Cor para valores mínimos
+    (1, red),    # Cor para valores máximos
+]
+colorscale = [
+    (0, blue),   # Cor para valores mínimos
+    (0.33, green),
+    (0.66, orange),
+    (1, red),    # Cor para valores máximos
+]
+
 
 template_theme1 = "cyborg"
 template_theme2 = "cyborg"
