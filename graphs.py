@@ -72,7 +72,8 @@ aux_bar = aux_bar.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
                               ascending=False).reset_index()
 
 
-fig_bar = px.bar(aux_bar, x='COUNTING', y='NEIGHBOURHOOD', title=None)
+fig_bar = px.bar(aux_bar, x='COUNTING', y='NEIGHBOURHOOD',
+                 title=None, template=template)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None, template=template)
 
@@ -97,7 +98,8 @@ df = pd.DataFrame(df_store)
 fig_estacoes = px.bar(df.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
                       x='SEASON', y='COUNTING')
 
-fig_estacoes.update_layout(main_config, height=200, xaxis_title=None)
+fig_estacoes.update_layout(main_config, height=200,
+                           xaxis_title=None, template=template)
 
 # Criando gráfico período ===========================================
 df = pd.DataFrame(df_store)

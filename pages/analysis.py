@@ -374,7 +374,8 @@ def update_graph(data, year, crime):
      Output('body', 'children'),
      Output('id-graph-modal', 'figure')],
     [Input('drop-year-1', 'value'),
-     Input('drop-crime-1', 'value'),]
+     Input('drop-crime-1', 'value')],
+    prevent_initial_call=False
 )
 def update_graph(year, crime):
     # template = template_theme1 if toggle else template_theme2
@@ -416,7 +417,7 @@ def update_graph(year, crime):
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
 
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
-                        title=None, color='COUNTING', color_continuous_scale="fall")
+                        title=None)
     fig_detail.update_layout(main_config, height=350,
                              yaxis_title=None, xaxis_title=None, template=template)
     fig_detail.add_vline(x=average_value, line_width=3,
@@ -434,6 +435,7 @@ def update_graph(year, crime):
 
     text = f"Os bairros são: {others_bairros}"
     text = None
+    print(template)
     # print(text)
 
     del dff
@@ -458,8 +460,9 @@ def update_graph(crimes):
         mask = aux_multi.TYPE.isin(crimes)
         fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
                                   color='TYPE',
-                                  color_discrete_sequence=["#3F5A42", "#818F6E", "#8F9B78", "#B4B890", "#CECDA2", "#F4EBBB",
-                                                           "#F3DCAC", "#F1CE9E", "#E7A575", "#E9AB7B", "#E09161"])
+                                  )
+        color_discrete_sequence = ["#3F5A42", "#818F6E", "#8F9B78", "#B4B890", "#CECDA2", "#F4EBBB",
+                                   "#F3DCAC", "#F1CE9E", "#E7A575", "#E9AB7B", "#E09161"]
         # updates
         fig_multilinhas.update_layout(
             main_config, height=250, xaxis_title=None, yaxis_title=None)
@@ -499,10 +502,12 @@ def update_graph(data, crime, bairro1, bairro2):
     fig = go.Figure()
     # Toda linha
     fig.add_scattergl(
-        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'], line=dict(color='#3D5941'))
+        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
+    line = dict(color='#3D5941')
     # Abaixo de zero
     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-        df_final['COUNTING'] > 0.00000), line=dict(color='#CA562C'))
+        df_final['COUNTING'] > 0.00000), )
+    line = dict(color='#CA562C')
     # Updates
     del df_final
     fig.update_layout(main_config, height=165)
@@ -544,8 +549,8 @@ def update_graph(crime):
 
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
     fig_periodo = px.pie(aux,
-                         names='PERIOD', values='COUNTING', color='COUNTING', color_discrete_sequence=['#3D5941', '#CA562C'])
-
+                         names='PERIOD', values='COUNTING', color='COUNTING')
+    color_discrete_sequence = ['#3D5941', '#CA562C']
     fig_periodo.update_layout(main_config, height=200)
 
     return fig_periodo
@@ -562,10 +567,10 @@ def update_graph(crime, year):
     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
     fig_estacoes = px.bar(dff.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale='fall')
-
+                          x='SEASON', y='COUNTING', color='COUNTING', )
+    color_continuous_scale = 'fall'
     fig_estacoes.update_layout(
-        main_config, height=200, xaxis_title=None, yaxis_title=None)
+        main_config, height=200, xaxis_title=None, yaxis_title=None, template=template)
 
     return fig_estacoes
 
