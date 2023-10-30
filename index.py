@@ -63,7 +63,7 @@ def render_page_content(pathname):
 
     elif pathname == "/analysis":
         tela = analysis.layout
-        time.sleep(3)
+        # time.sleep(2.5)
         return tela
 
 
