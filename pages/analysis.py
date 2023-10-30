@@ -292,83 +292,83 @@ layout = dbc.Container(children=[
 
 
 # ====================== CARD indicador 1
-@app.callback(
-    Output('id-card-indicator-2', 'figure'),
-    [Input('dataset', 'data'),
-     Input('drop-month-1', 'value'),
-     Input('drop-crime-1', 'value')]
-    #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-# @cache.memoize(timeout=10)  # in seconds
-def update_graph(data, month, crime_selected):
-    # template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    year = 2022
-    datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
-        columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
-    df.loc[:, 'DATE'] = datetime_series
-    df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
-        'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
-    dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
-        (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
-    # Limpando as variáveis"
-    del df
+# @app.callback(
+#     Output('id-card-indicator-2', 'figure'),
+#     [Input('dataset', 'data'),
+#      Input('drop-month-1', 'value'),
+#      Input('drop-crime-1', 'value')]
+#     #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# # @cache.memoize(timeout=10)  # in seconds
+# def update_graph(data, month, crime_selected):
+#     # template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     year = 2022
+#     datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
+#         columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
+#     df.loc[:, 'DATE'] = datetime_series
+#     df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
+#         'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
+#     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
+#         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
+#     # Limpando as variáveis"
+#     del df
 
-    dff = dff.drop(['YEAR', 'MONTH'], axis=1)
-    for crime in df_crimes.TYPE.unique():
-        for date in dff.DATE.unique():
-            if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
-                dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
-    dff['COUNTING'] = dff['COUNTING'].astype(int)
-    df_filtered = dff[dff.TYPE.isin([crime_selected])]
+#     dff = dff.drop(['YEAR', 'MONTH'], axis=1)
+#     for crime in df_crimes.TYPE.unique():
+#         for date in dff.DATE.unique():
+#             if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
+#                 dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
+#     dff['COUNTING'] = dff['COUNTING'].astype(int)
+#     df_filtered = dff[dff.TYPE.isin([crime_selected])]
 
-# Limpando as variáveis"
-    del dff
+# # Limpando as variáveis"
+#     del dff
 
-    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-    fig = go.Figure(go.Indicator(
-        mode="number+delta",
-        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-        number={'valueformat': '.0f', 'font': {'size': 40}},
-        title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
-               'increasing': {'color': red}, 'decreasing': {'color': green}},
-        domain={'x': [0, 1], 'y': [0.05, 0.8]}
-    ))
-    fig.update_layout(main_config, height=150, template=template)
-    del df_filtered
-    return fig
+#     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
+#     fig = go.Figure(go.Indicator(
+#         mode="number+delta",
+#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+#         number={'valueformat': '.0f', 'font': {'size': 40}},
+#         title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+#         delta={'relative': True, 'valueformat': '.1%',
+#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
+#                'increasing': {'color': red}, 'decreasing': {'color': green}},
+#         domain={'x': [0, 1], 'y': [0.05, 0.8]}
+#     ))
+#     fig.update_layout(main_config, height=150, template=template)
+#     del df_filtered
+#     return fig
 
 
-# ====================== CARD indicador 2
-@app.callback(
-    Output('id-card-indicator-1', 'figure'),
-    [Input('dataset', 'data'),
-     Input('drop-year-1', 'value'),
-     Input('drop-crime-1', 'value')]
-    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-)
-def update_graph(data, year, crime):
-    # template = template_theme1 if toggle else template_theme2
-    df = pd.DataFrame(data)
-    dff = df[df['TYPE'] == crime]
-    aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
-        columns={'DAY': 'COUNTING'})
-    fig_indicator = go.Figure()
-    fig_indicator.add_trace(go.Indicator(
-        mode="number+delta",
-        title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-        value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
-        number={'valueformat': '.0f', 'font': {'size': 40}},
-        delta={'relative': True, 'valueformat': '.1%',
-               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
-               'increasing': {'color': red}, 'decreasing': {'color': green}},
-        domain={'x': [0, 1], 'y': [0.05, 0.8]}
-    ))
-    del aux, dff, df
-    fig_indicator.update_layout(main_config, height=150, template=template)
-    return fig_indicator
+# # ====================== CARD indicador 2
+# @app.callback(
+#     Output('id-card-indicator-1', 'figure'),
+#     [Input('dataset', 'data'),
+#      Input('drop-year-1', 'value'),
+#      Input('drop-crime-1', 'value')]
+#     # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# def update_graph(data, year, crime):
+#     # template = template_theme1 if toggle else template_theme2
+#     df = pd.DataFrame(data)
+#     dff = df[df['TYPE'] == crime]
+#     aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
+#         columns={'DAY': 'COUNTING'})
+#     fig_indicator = go.Figure()
+#     fig_indicator.add_trace(go.Indicator(
+#         mode="number+delta",
+#         title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+#         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
+#         number={'valueformat': '.0f', 'font': {'size': 40}},
+#         delta={'relative': True, 'valueformat': '.1%',
+#                'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
+#                'increasing': {'color': red}, 'decreasing': {'color': green}},
+#         domain={'x': [0, 1], 'y': [0.05, 0.8]}
+#     ))
+#     del aux, dff, df
+#     fig_indicator.update_layout(main_config, height=150, template=template)
+#     return fig_indicator
 
 
 @app.callback(
@@ -387,6 +387,9 @@ def update_graph(year, crime):
     aux = dff.copy()
     average = aux.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
     ).reset_index().sort_values(['COUNTING'])
+
+    print(dff.columns)
+
     average_value = average.loc[0, 'COUNTING']
 
     dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
@@ -446,7 +449,7 @@ def update_graph(year, crime):
 
     text = f"Os bairros são: {others_bairros}"
     text = None
-    print(template)
+    # print(template)
     # print(text)
 
     del dff
@@ -484,67 +487,87 @@ def update_graph(crimes):
 # # ======================= Grafico comparacao
 
 
+# @app.callback(
+#     [Output("id-graph-comparison", 'figure'),
+#      Output('desc_comparison', 'children')],
+#     [Input('dataset', 'data'),
+#      Input('drop-crime-1', 'value'),
+#      Input('drop-bairro-1', 'value'),
+#      Input('drop-bairro-2', 'value')]
+#     # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+# )
+# # @cache.memoize(timeout=10)  # in seconds
+# def update_graph(data, crime, bairro1, bairro2):
+
+#     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
+#     df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
+#     df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
+#         'PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'})
+#     df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
+#         'PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'})
+#     df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
+#     df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
+#     df_final = pd.DataFrame()
+#     df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
+#     df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
+
+#     del df1, df2, df_bairro1, df_bairro2
+
+#     fig = go.Figure()
+#     # Toda linha
+#     fig.add_scattergl(
+#         name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
+#     line = dict(color='#3D5941')
+#     # Abaixo de zero
+#     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
+#         df_final['COUNTING'] > 0.00000), )
+#     line = dict(color='#CA562C')
+#     # Updates
+#     del df_final
+#     fig.update_layout(main_config, height=180)
+#     # fig.update_yaxes(range = [-0.7,0.7])
+#     # Annotations pra mostrar quem é o mais barato
+#     fig.add_annotation(text=f'{bairro1} had more crimes',
+#                        xref="paper", yref="paper",
+#                        font=dict(
+#                            family="Courier New, monospace",
+#                            size=12,
+#                            color="#ffffff"
+#                        ),
+#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+#                        x=0.5, y=0.75, showarrow=False)
+#     fig.add_annotation(text=f'{bairro2} had more crimes',
+#                        xref="paper", yref="paper",
+#                        font=dict(
+#                            family="Courier New, monospace",
+#                            size=12,
+#                            color="#ffffff"
+#                        ),
+#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+#                        x=0.5, y=0.25, showarrow=False)
+#     # Definindo o texto
+#     text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
+#     return [fig, text_comparison]
+
+
+# #======================= Gráfico estações
+
+
 @app.callback(
-    [Output("id-graph-comparison", 'figure'),
-     Output('desc_comparison', 'children')],
-    [Input('dataset', 'data'),
-     Input('drop-crime-1', 'value'),
-     Input('drop-bairro-1', 'value'),
-     Input('drop-bairro-2', 'value')]
-    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+    Output("id-estacao-graph", "figure"),
+    [Input('drop-crime-1', 'value'),
+     Input('drop-year-1', 'value'),]
 )
-# @cache.memoize(timeout=10)  # in seconds
-def update_graph(data, crime, bairro1, bairro2):
+def update_graph(crime, year):
+    dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
-    df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
-    df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
-    df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
-        'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-    df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
-        'DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'})
-    df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
-    df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
-    df_final = pd.DataFrame()
-    df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
-    df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
+    fig_estacoes = px.bar(dff.groupby('SEASON')['PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'}),
+                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
+    color_continuous_scale = 'fall'
+    fig_estacoes.update_layout(
+        main_config, height=170, xaxis_title=None, yaxis_title=None, template=template)
 
-    del df1, df2, df_bairro1, df_bairro2
-
-    fig = go.Figure()
-    # Toda linha
-    fig.add_scattergl(
-        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
-    line = dict(color='#3D5941')
-    # Abaixo de zero
-    fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-        df_final['COUNTING'] > 0.00000), )
-    line = dict(color='#CA562C')
-    # Updates
-    del df_final
-    fig.update_layout(main_config, height=180)
-    # fig.update_yaxes(range = [-0.7,0.7])
-    # Annotations pra mostrar quem é o mais barato
-    fig.add_annotation(text=f'{bairro1} had more crimes',
-                       xref="paper", yref="paper",
-                       font=dict(
-                           family="Courier New, monospace",
-                           size=12,
-                           color="#ffffff"
-                       ),
-                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                       x=0.5, y=0.75, showarrow=False)
-    fig.add_annotation(text=f'{bairro2} had more crimes',
-                       xref="paper", yref="paper",
-                       font=dict(
-                           family="Courier New, monospace",
-                           size=12,
-                           color="#ffffff"
-                       ),
-                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-                       x=0.5, y=0.25, showarrow=False)
-    # Definindo o texto
-    text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
-    return [fig, text_comparison]
+    return fig_estacoes
 
 
 # #======================= Gráfico Periodo
@@ -560,30 +583,11 @@ def update_graph(crime):
 
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
     fig_periodo = px.pie(aux,
-                         names='PERIOD', values='COUNTING', color='COUNTING')
+                         names='PERIOD', values='COUNTING', color='COUNTING', template=template)
     color_discrete_sequence = ['#3D5941', '#CA562C']
     fig_periodo.update_layout(main_config, height=170)
 
     return fig_periodo
-
-# #======================= Gráfico estações
-
-
-@app.callback(
-    Output("id-estacao-graph", "figure"),
-    [Input('drop-crime-1', 'value'),
-     Input('drop-year-1', 'value'),]
-)
-def update_graph(crime, year):
-    dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
-
-    fig_estacoes = px.bar(dff.groupby('SEASON')['DAY'].count().reset_index().rename(columns={'DAY': 'COUNTING'}),
-                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
-    color_continuous_scale = 'fall'
-    fig_estacoes.update_layout(
-        main_config, height=170, xaxis_title=None, yaxis_title=None, template=template)
-
-    return fig_estacoes
 
 
 @app.callback(
