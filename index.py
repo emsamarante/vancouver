@@ -9,6 +9,7 @@ from app import *
 # from dash_bootstrap_templates import ThemeSwitchAIO
 from pages import analysis,  home, map
 import sidebar
+import time
 
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@1.0.4/dbc.min.css"
 
@@ -18,7 +19,8 @@ navbar = dbc.NavbarSimple(
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Analysis", href="/analysis"),
+                dbc.DropdownMenuItem(
+                    "Analysis", href="/analysis", id='id-load-trigger'),
                 dbc.DropdownMenuItem("Maps", href="#"),
             ],
             nav=True,
@@ -32,7 +34,6 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-
 app.layout = dbc.Container(children=[
     dbc.Row([
         dbc.Col([
@@ -41,6 +42,8 @@ app.layout = dbc.Container(children=[
         ], sm=4, lg=12),], style={"margin-top": "7px"}, className='g2 my-auto'),
     dbc.Row([
         dbc.Col([
+            # dcc.Loading(id="id-load-trigger",
+            #             children=[html.Div(id="page-content")], type="default"),
             html.Div(id="page-content")
         ], sm=8, lg=12,)
     ], style={"margin-top": "7px"}, className='g2 my-auto')
@@ -55,14 +58,13 @@ def render_page_content(pathname):
     if pathname == "/":
         return home.layout
 
-    # if pathname == "/":
-    #     return analysis.layout
+    elif pathname == "/map":
+        return map.layout
 
-    # if pathname == "/map":
-    #     return map.layout
-
-    if pathname == "/analysis":
-        return analysis.layout
+    elif pathname == "/analysis":
+        tela = analysis.layout
+        time.sleep(3)
+        return tela
 
 
 if __name__ == '__main__':
