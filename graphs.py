@@ -79,6 +79,7 @@ df0 = pd.read_csv("data/dataset_agg.csv", index_col=0)
 df_store = df0.to_dict()
 df = pd.DataFrame(df_store)
 
+print(df.columns)
 
 # Criando gráfico de barra ===========================================
 aux_bar = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).sum()[

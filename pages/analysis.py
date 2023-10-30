@@ -291,54 +291,57 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
-# ====================== CARD indicador 1
-# @app.callback(
-#     Output('id-card-indicator-2', 'figure'),
-#     [Input('dataset', 'data'),
-#      Input('drop-month-1', 'value'),
-#      Input('drop-crime-1', 'value')]
-#     #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# # @cache.memoize(timeout=10)  # in seconds
-# def update_graph(data, month, crime_selected):
-#     # template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     year = 2022
-#     datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
-#         columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
-#     df.loc[:, 'DATE'] = datetime_series
-#     df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
-#         'HUNDRED_BLOCK'].count().reset_index().rename(columns={'HUNDRED_BLOCK': 'COUNTING'})
-#     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
-#         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
-#     # Limpando as variáveis"
-#     del df
+# ====================== CARD indicador 2
+@app.callback(
+    Output('id-card-indicator-2', 'figure'),
+    [Input('dataset', 'data'),
+     Input('drop-month-1', 'value'),
+     Input('drop-crime-1', 'value')]
+    #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+# @cache.memoize(timeout=10)  # in seconds
+def update_graph(data, month, crime_selected):
+    # template = template_theme1 if toggle else template_theme2
+    df = pd.DataFrame(data)
+    year = 2022
+    # datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
+    #     columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
+    datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY']].rename(
+        columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY'}))
 
-#     dff = dff.drop(['YEAR', 'MONTH'], axis=1)
-#     for crime in df_crimes.TYPE.unique():
-#         for date in dff.DATE.unique():
-#             if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
-#                 dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
-#     dff['COUNTING'] = dff['COUNTING'].astype(int)
-#     df_filtered = dff[dff.TYPE.isin([crime_selected])]
+    df.loc[:, 'DATE'] = datetime_series
+    df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
+        'COUNTING'].sum().reset_index()
+    dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
+        (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
+    # Limpando as variáveis"
+    del df
 
-# # Limpando as variáveis"
-#     del dff
+    dff = dff.drop(['YEAR', 'MONTH'], axis=1)
+    for crime in df_crimes.TYPE.unique():
+        for date in dff.DATE.unique():
+            if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
+                dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
+    dff['COUNTING'] = dff['COUNTING'].astype(int)
+    df_filtered = dff[dff.TYPE.isin([crime_selected])]
 
-#     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
-#     fig = go.Figure(go.Indicator(
-#         mode="number+delta",
-#         value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
-#         number={'valueformat': '.0f', 'font': {'size': 40}},
-#         title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-#         delta={'relative': True, 'valueformat': '.1%',
-#                'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
-#                'increasing': {'color': red}, 'decreasing': {'color': green}},
-#         domain={'x': [0, 1], 'y': [0.05, 0.8]}
-#     ))
-#     fig.update_layout(main_config, height=150, template=template)
-#     del df_filtered
-#     return fig
+# Limpando as variáveis"
+    del dff
+
+    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
+    fig = go.Figure(go.Indicator(
+        mode="number+delta",
+        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+        number={'valueformat': '.0f', 'font': {'size': 40}},
+        title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+        delta={'relative': True, 'valueformat': '.1%',
+               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
+               'increasing': {'color': red}, 'decreasing': {'color': green}},
+        domain={'x': [0, 1], 'y': [0.05, 0.8]}
+    ))
+    fig.update_layout(main_config, height=150, template=template)
+    del df_filtered
+    return fig
 
 
 # # ====================== CARD indicador 2
@@ -388,7 +391,7 @@ def update_graph(year, crime):
     average = aux.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
     ).reset_index().sort_values(['COUNTING'])
 
-    print(dff.columns)
+    # print(dff.columns)
 
     average_value = average.loc[0, 'COUNTING']
 
