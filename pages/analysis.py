@@ -388,7 +388,7 @@ def update_graph(year, crime):
     dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
     aux = dff.copy()
-    average = aux.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
+    average = dff.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
     ).reset_index().sort_values(['COUNTING'])
 
     # print(dff.columns)
