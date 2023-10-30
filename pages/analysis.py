@@ -490,67 +490,72 @@ def update_graph(crimes):
 # # ======================= Grafico comparacao
 
 
-# @app.callback(
-#     [Output("id-graph-comparison", 'figure'),
-#      Output('desc_comparison', 'children')],
-#     [Input('dataset', 'data'),
-#      Input('drop-crime-1', 'value'),
-#      Input('drop-bairro-1', 'value'),
-#      Input('drop-bairro-2', 'value')]
-#     # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# # @cache.memoize(timeout=10)  # in seconds
-# def update_graph(data, crime, bairro1, bairro2):
+@app.callback(
+    [Output("id-graph-comparison", 'figure'),
+     Output('desc_comparison', 'children')],
+    [Input('dataset', 'data'),
+     Input('drop-crime-1', 'value'),
+     Input('drop-bairro-1', 'value'),
+     Input('drop-bairro-2', 'value')]
+    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+# @cache.memoize(timeout=10)  # in seconds
+def update_graph(data, crime, bairro1, bairro2):
 
-#     df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
-#     df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
-#     df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
-#         'PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'})
-#     df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
-#         'PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'})
-#     df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
-#     df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
-#     df_final = pd.DataFrame()
-#     df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
-#     df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
+    datetime_series = pd.to_datetime(
+        df[['YEAR', 'MONTH', 'DAY']])
+    df.loc[:, 'DATA'] = datetime_series
 
-#     del df1, df2, df_bairro1, df_bairro2
+    df1 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro1]))]
+    df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
 
-#     fig = go.Figure()
-#     # Toda linha
-#     fig.add_scattergl(
-#         name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
-#     line = dict(color='#3D5941')
-#     # Abaixo de zero
-#     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-#         df_final['COUNTING'] > 0.00000), )
-#     line = dict(color='#CA562C')
-#     # Updates
-#     del df_final
-#     fig.update_layout(main_config, height=180)
-#     # fig.update_yaxes(range = [-0.7,0.7])
-#     # Annotations pra mostrar quem é o mais barato
-#     fig.add_annotation(text=f'{bairro1} had more crimes',
-#                        xref="paper", yref="paper",
-#                        font=dict(
-#                            family="Courier New, monospace",
-#                            size=12,
-#                            color="#ffffff"
-#                        ),
-#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-#                        x=0.5, y=0.75, showarrow=False)
-#     fig.add_annotation(text=f'{bairro2} had more crimes',
-#                        xref="paper", yref="paper",
-#                        font=dict(
-#                            family="Courier New, monospace",
-#                            size=12,
-#                            color="#ffffff"
-#                        ),
-#                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
-#                        x=0.5, y=0.25, showarrow=False)
-#     # Definindo o texto
-#     text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
-#     return [fig, text_comparison]
+    df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
+        'COUNTING'].sum().reset_index()
+    df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
+        'COUNTING'].sum().reset_index()
+    df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
+    df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
+    df_final = pd.DataFrame()
+    df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
+    df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
+
+    del df1, df2, df_bairro1, df_bairro2
+
+    fig = go.Figure()
+    # Toda linha
+    fig.add_scattergl(
+        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
+    line = dict(color='#3D5941')
+    # Abaixo de zero
+    fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
+        df_final['COUNTING'] > 0.00000), )
+    line = dict(color='#CA562C')
+    # Updates
+    del df_final
+    fig.update_layout(main_config, height=180)
+    # fig.update_yaxes(range = [-0.7,0.7])
+    # Annotations pra mostrar quem é o mais barato
+    fig.add_annotation(text=f'{bairro1} had more crimes',
+                       xref="paper", yref="paper",
+                       font=dict(
+                           family="Courier New, monospace",
+                           size=12,
+                           color="#ffffff"
+                       ),
+                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                       x=0.5, y=0.75, showarrow=False)
+    fig.add_annotation(text=f'{bairro2} had more crimes',
+                       xref="paper", yref="paper",
+                       font=dict(
+                           family="Courier New, monospace",
+                           size=12,
+                           color="#ffffff"
+                       ),
+                       align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
+                       x=0.5, y=0.25, showarrow=False)
+    # Definindo o texto
+    text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
+    return [fig, text_comparison]
 
 
 # #======================= Gráfico estações
