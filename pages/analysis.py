@@ -345,33 +345,33 @@ def update_graph(data, month, crime_selected):
 
 
 # # ====================== CARD indicador 2
-# @app.callback(
-#     Output('id-card-indicator-1', 'figure'),
-#     [Input('dataset', 'data'),
-#      Input('drop-year-1', 'value'),
-#      Input('drop-crime-1', 'value')]
-#     # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
-# )
-# def update_graph(data, year, crime):
-#     # template = template_theme1 if toggle else template_theme2
-#     df = pd.DataFrame(data)
-#     dff = df[df['TYPE'] == crime]
-#     aux = dff.groupby(['YEAR']).count()['DAY'].reset_index().rename(
-#         columns={'DAY': 'COUNTING'})
-#     fig_indicator = go.Figure()
-#     fig_indicator.add_trace(go.Indicator(
-#         mode="number+delta",
-#         title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-#         value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
-#         number={'valueformat': '.0f', 'font': {'size': 40}},
-#         delta={'relative': True, 'valueformat': '.1%',
-#                'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
-#                'increasing': {'color': red}, 'decreasing': {'color': green}},
-#         domain={'x': [0, 1], 'y': [0.05, 0.8]}
-#     ))
-#     del aux, dff, df
-#     fig_indicator.update_layout(main_config, height=150, template=template)
-#     return fig_indicator
+@app.callback(
+    Output('id-card-indicator-1', 'figure'),
+    [Input('dataset', 'data'),
+     Input('drop-year-1', 'value'),
+     Input('drop-crime-1', 'value')]
+    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
+)
+def update_graph(data, year, crime):
+    # template = template_theme1 if toggle else template_theme2
+    df = pd.DataFrame(data)
+    dff = df[df['TYPE'] == crime]
+    aux = dff.groupby(['YEAR']).sum()['COUNTING'].reset_index()
+
+    fig_indicator = go.Figure()
+    fig_indicator.add_trace(go.Indicator(
+        mode="number+delta",
+        title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
+        value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
+        number={'valueformat': '.0f', 'font': {'size': 40}},
+        delta={'relative': True, 'valueformat': '.1%',
+               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
+               'increasing': {'color': red}, 'decreasing': {'color': green}},
+        domain={'x': [0, 1], 'y': [0.05, 0.8]}
+    ))
+    del aux, dff, df
+    fig_indicator.update_layout(main_config, height=150, template=template)
+    return fig_indicator
 
 
 @app.callback(
