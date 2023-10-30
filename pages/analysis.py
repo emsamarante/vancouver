@@ -247,7 +247,7 @@ layout = dbc.Container(children=[
                                             dcc.Graph(id="id-graph-comparison", config=config_graph)], lg=12),
                                     ])
                                 ])
-                            ], style=tab_card),
+                            ], style={'height': '85%'}),
                             # CARD("Direct Comparisson",
                             #      "id-graph-comparison", lg=12),
                             html.P(id='desc_comparison', style={
@@ -336,7 +336,7 @@ def update_graph(data, month, crime_selected):
                'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
-    fig.update_layout(main_config, height=160, template=template)
+    fig.update_layout(main_config, height=150, template=template)
     del df_filtered
     return fig
 
@@ -367,7 +367,7 @@ def update_graph(data, year, crime):
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     del aux, dff, df
-    fig_indicator.update_layout(main_config, height=160, template=template)
+    fig_indicator.update_layout(main_config, height=150, template=template)
     return fig_indicator
 
 
@@ -404,7 +404,7 @@ def update_graph(year, crime):
     # , color_continuous_scale="fall"
     fig_bar.add_vline(x=average_value, line_width=3,
                       line_dash="dash", line_color="white", label=dict(text=None))
-    fig_bar.update_layout(main_config, height=160,
+    fig_bar.update_layout(main_config, height=150,
                           yaxis_title=None, xaxis_title=None, template=template)
     fig_bar.add_annotation(text=f"Average: {round(average_value,1)}",
                            xref="paper", yref="paper",
@@ -476,7 +476,7 @@ def update_graph(crimes):
                                    "#F3DCAC", "#F1CE9E", "#E7A575", "#E9AB7B", "#E09161"]
         # updates
         fig_multilinhas.update_layout(
-            main_config, height=250, xaxis_title=None, yaxis_title=None)
+            main_config, height=220, xaxis_title=None, yaxis_title=None)
 
         del mask
         return fig_multilinhas
@@ -521,7 +521,7 @@ def update_graph(data, crime, bairro1, bairro2):
     line = dict(color='#CA562C')
     # Updates
     del df_final
-    fig.update_layout(main_config, height=165)
+    fig.update_layout(main_config, height=180)
     # fig.update_yaxes(range = [-0.7,0.7])
     # Annotations pra mostrar quem é o mais barato
     fig.add_annotation(text=f'{bairro1} had more crimes',
@@ -562,7 +562,7 @@ def update_graph(crime):
     fig_periodo = px.pie(aux,
                          names='PERIOD', values='COUNTING', color='COUNTING')
     color_discrete_sequence = ['#3D5941', '#CA562C']
-    fig_periodo.update_layout(main_config, height=200)
+    fig_periodo.update_layout(main_config, height=170)
 
     return fig_periodo
 
@@ -581,7 +581,7 @@ def update_graph(crime, year):
                           x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
     color_continuous_scale = 'fall'
     fig_estacoes.update_layout(
-        main_config, height=200, xaxis_title=None, yaxis_title=None, template=template)
+        main_config, height=170, xaxis_title=None, yaxis_title=None, template=template)
 
     return fig_estacoes
 
