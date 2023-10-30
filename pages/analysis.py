@@ -225,7 +225,7 @@ layout = dbc.Container(children=[
                                 id="drop-bairro-1",
                                 value="Fairview",
                                 options=[{'label': i, "value": i}
-                                         for i in df.NEIGHBOURHOOD.unique()],
+                                         for i in sorted(df.NEIGHBOURHOOD.unique())],
                             )
                         ], lg=6),
                         dbc.Col([
@@ -233,7 +233,7 @@ layout = dbc.Container(children=[
                                 id="drop-bairro-2",
                                 value="Strathcona",
                                 options=[{'label': i, "value": i}
-                                         for i in df.NEIGHBOURHOOD.unique()],
+                                         for i in sorted(df.NEIGHBOURHOOD.unique())],
                             )
                         ], lg=6)
                     ], className='g-2 my-auto'),
