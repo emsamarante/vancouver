@@ -18,8 +18,8 @@ texto_project_2 = """In this project I analyse data of crimes in Vancouver and s
 by four screens: """
 
 
-
-tab_card = {'height': '98vh', "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 5px 6px 15px 0 rgba(0, 0, 0, 0.19)"}
+tab_card_home = {'height': '92vh',
+                 "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 5px 6px 15px 0 rgba(0, 0, 0, 0.19)"}
 
 
 layout = dbc.Container([
@@ -28,28 +28,33 @@ layout = dbc.Container([
             dbc.Card([
                 dbc.CardBody([
                     dbc.Row([
-                        dbc.CardImg(src="/static/images/vancouver.jpg",style={"object-fit": "cover", "object-position": "100% 65%",
+                        dbc.CardImg(src="/static/images/vancouver.jpg", style={"object-fit": "cover", "object-position": "100% 65%",
                                                                                "width": "100%", "height": "400px"}),
-                        html.H2("Is Vancouver dangerous?", style={'margin-top':'15px'}),
+                        html.H2("Is Vancouver dangerous?",
+                                style={'margin-top': '15px'}),
                         dbc.Col([
-                            html.H4("Overview", style={"margin-top":"15px"}),
+                            html.H4("Overview", style={"margin-top": "15px"}),
                             html.P(texto, style={"text-align": "justify"})
                         ], sm=6),
                         dbc.Col([
                             html.Div([
-                                html.H4("About the project", style={"margin-top":"15px"}),
+                                html.H4("About the project", style={
+                                        "margin-top": "15px"}),
                                 html.P(texto_project_1),
                                 html.P(texto_project_2),
-                                html.Li("Home - You see a brief overview of Vancouver and the project. (This page)", style={'margin-left':'15px'} ),
-                                html.Li("Maps - The analysis of crimes in georeferencing perspective.", style={'margin-left':'15px'} ),
-                                html.Li("Analysis - Analysis of crimes and some metrics.", style={'margin-left':'15px'} ),
-                            ], style={"text-align": "justify"} ),
-                            
+                                html.Li(
+                                    "Home - You see a brief overview of Vancouver and the project. (This page)", style={'margin-left': '15px'}),
+                                html.Li(
+                                    "Maps - The analysis of crimes in georeferencing perspective.", style={'margin-left': '15px'}),
+                                html.Li(
+                                    "Analysis - Analysis of crimes and some metrics.", style={'margin-left': '15px'}),
+                            ], style={"text-align": "justify"}),
+
                         ], sm=6),
                     ])
                 ])
-            ], style=tab_card)
+            ], style=tab_card_home)
         ], lg=12)
-    ], className='g-2 my-auto', style={"margin-top":"9px"}),
-    
+    ], className='g-2 my-auto', style={"margin-top": "9px"}),
+
 ], fluid=True)
