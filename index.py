@@ -2,14 +2,14 @@
 from dash import dcc, html
 from dash.dependencies import Output, Input
 import dash_bootstrap_components as dbc
+# from Projetos.vancouver.pages import maps
 # import dash_bootstrap_templates
 # import pandas as pd
 # import layouts
 from app import *
 # from dash_bootstrap_templates import ThemeSwitchAIO
-from pages import analysis,  home, map
-import sidebar
-import time
+from pages import analysis,  home, maps
+
 
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@1.0.4/dbc.min.css"
 
@@ -21,7 +21,7 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem("More pages", header=True),
                 dbc.DropdownMenuItem(
                     "Analysis", href="/analysis", id='id-load-trigger'),
-                dbc.DropdownMenuItem("Maps", href="#"),
+                dbc.DropdownMenuItem("Maps", href="/maps"),
             ],
             nav=True,
             in_navbar=True,
@@ -58,8 +58,8 @@ def render_page_content(pathname):
     if pathname == "/":
         return home.layout
 
-    elif pathname == "/map":
-        return map.layout
+    elif pathname == "/maps":
+        return maps.layout
 
     elif pathname == "/analysis":
         tela = analysis.layout
