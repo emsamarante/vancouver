@@ -7,8 +7,8 @@ div.Select-control {
 }
 
 .VirtualizedSelectOption {
-    background-color: rgba(39, 38, 38, 0.5);
-    color: white !important;
+    background-color: rgba(8, 8, 8, 0.75);
+    color: rgb(231, 221, 221) !important;
 }
 
 .Select-value-label {
