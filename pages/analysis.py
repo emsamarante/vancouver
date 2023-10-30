@@ -299,7 +299,7 @@ layout = dbc.Container(children=[
      Input('drop-crime-1', 'value')]
     #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-# @cache.memoize(timeout=10)  # in seconds
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 def update_graph(data, month, crime_selected):
     # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
@@ -345,6 +345,7 @@ def update_graph(data, month, crime_selected):
 
 
 # # ====================== CARD indicador 2
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('id-card-indicator-1', 'figure'),
     [Input('dataset', 'data'),
@@ -374,6 +375,7 @@ def update_graph(data, year, crime):
     return fig_indicator
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     [Output('id-graph-1', 'figure'),
      Output('body', 'children'),
@@ -462,6 +464,7 @@ def update_graph(year, crime):
 # # ====================== Grafico de linha
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("id-graph-line-1", 'figure'),
     [Input('drop-crime-3', 'value'),]
@@ -490,6 +493,7 @@ def update_graph(crimes):
 # # ======================= Grafico comparacao
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     [Output("id-graph-comparison", 'figure'),
      Output('desc_comparison', 'children')],
@@ -560,7 +564,7 @@ def update_graph(data, crime, bairro1, bairro2):
 
 # #======================= Gráfico estações
 
-
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("id-estacao-graph", "figure"),
     [Input('drop-crime-1', 'value'),
@@ -580,7 +584,7 @@ def update_graph(crime, year):
 
 # #======================= Gráfico Periodo
 
-
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("id-periodo", "figure"),
     [Input('drop-crime-1', 'value'),]
@@ -598,6 +602,7 @@ def update_graph(crime):
     return fig_periodo
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("modal", "is_open"),
     [Input("open", "n_clicks"), Input("close", "n_clicks")],
