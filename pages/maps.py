@@ -80,7 +80,7 @@ layout = dbc.Container(children=[
                             dbc.Row([
                                 dbc.Col([
                                     html.H6("Crimes georeferenced"),
-                                    dcc.Graph()
+                                    dcc.Graph(id='map')
                                 ])
                             ])
                         ])
@@ -104,6 +104,7 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('drop-crime', 'options'),
     [Input('dataset_map', 'data'),
@@ -115,6 +116,7 @@ def set_crimes_options(data, year):
     return [{'label': i, 'value': i} for i in crimes]
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('drop-season', 'options'),
     [Input('dataset_map', 'data'),
@@ -128,6 +130,7 @@ def set_season_options(data, year, crime):
     return [{'label': i, 'value': i} for i in seasons]
 
 
+@cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('drop-month', 'options'),
     [Input('dataset_map', 'data'),
@@ -140,3 +143,24 @@ def set_month_options(data, year, crime, season):
     months = sorted(df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
         df.SEASON.isin([season]))]['MONTH'].unique())
     return [{'label': i, 'value': i} for i in months]
+
+
+@cache.memoize(timeout=TIMEOUT)  # in seconds
+@app.callback(
+    Output('map', 'figure'),
+    [Input('dataset_map', 'data'),
+     Input('drop-year', 'value'),
+     Input('drop-crime', 'value'),
+     Input('drop-season', 'value'),
+     Input('drop-month', 'value')]
+)
+def update_map(data, year, crime, season, month):
+    df = pd.DataFrame(data)
+    aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
+        df.SEASON.isin([season])) & (df.MONTH.isin([month]))]
+
+    fig_map = px.scatter_mapbox(
+        aux, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=500)
+    fig_map.update_layout(mapbox_style="open-street-map")
+    fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    return fig_map
