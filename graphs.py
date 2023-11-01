@@ -117,7 +117,20 @@ df_store_map = df_map0.to_dict()
 df_map = pd.DataFrame(df_store_map)
 
 
-# Criando gráfico season - tela mapa =========================================
+# MAPA
+df_map = pd.DataFrame(df_store_map)
+fig_map = px.scatter_mapbox(
+    df_map, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
+fig_map.update_layout(mapbox_style="open-street-map")
+fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+
+# Criando gráfico season
+df_map = pd.DataFrame(df_store_map)
+
+initial_neighbourhoods = ['Arbutus Ridge', 'Central Business District', 'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
+                          'Hastings-Sunrise', 'Kensington-Cedar Cottage', 'Kerrisdale']
+
 
 fig_bar_season = px.histogram(df_map,
                               x="NEIGHBOURHOOD",
@@ -131,11 +144,3 @@ fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
 fig_bar_season.update_xaxes(categoryorder='total descending')
 fig_bar_season.update_traces(
     textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
-
-
-# MAPA
-df_map = pd.DataFrame(df_store_map)
-fig_map = px.scatter_mapbox(
-    df_map, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
-fig_map.update_layout(mapbox_style="open-street-map")
-fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
