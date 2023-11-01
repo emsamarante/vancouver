@@ -85,19 +85,21 @@ layout = dbc.Container(children=[
                             ])
                         ])
                     ], style=tab_card)
-                ], lg=8),
+                ], lg=6),
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
                                     html.H6("Crimes georeferenced"),
-                                    dcc.Graph()
+                                    dcc.Graph(id="crimes-season",
+                                              className='scroll',
+                                              figure=fig_bar_season)
                                 ])
                             ])
                         ])
                     ], style=tab_card)
-                ], lg=4)
+                ], lg=6)
             ], className='g-2 my-auto',)
         ]),
     ])
@@ -160,7 +162,42 @@ def update_map(data, year, crime, season, month):
         df.SEASON.isin([season])) & (df.MONTH.isin([month]))]
 
     fig_map = px.scatter_mapbox(
-        aux, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=500)
+        aux, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
     fig_map.update_layout(mapbox_style="open-street-map")
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig_map
+
+
+@cache.memoize(timeout=TIMEOUT)  # in seconds
+@app.callback(
+    Output('crimes-season', 'figure'),
+    [Input('drop-year', 'value'),
+     Input('drop-crime', 'value')]
+)
+def update_graph(year, crime):
+    # df = pd.DataFrame(data)
+    aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
+
+    fig_bar_season = px.histogram(aux,
+                                  x="NEIGHBOURHOOD",
+                                  color="SEASON",
+                                  barnorm="percent",
+                                  text_auto=True,
+                                  # color_discrete_sequence=["mediumvioletred", "seagreen"],
+                                  )
+    fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
+                                 )
+    fig_bar_season.update_xaxes(categoryorder='total descending')
+    fig_bar_season.update_traces(
+        textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
+    return fig_bar_season
+
+    # aux_g = aux.groupby(['NEIGHBOURHOOD', 'SEASON']).size().reset_index()
+    # aux_g['percentage'] = aux.groupby(['NEIGHBOURHOOD', 'SEASON']).size().groupby(
+    #     level=0).apply(lambda x: 100 * x / float(x.sum())).values
+    # aux_g.columns = ['NEIGHBOURHOOD', 'SEASON', 'Counts', 'Percentage']
+
+    # fig_bar_season = px.bar(aux_g,
+    #                         x='NEIGHBOURHOOD', y=['Counts'], color='SEASON', text=aux_g['Percentage'].apply(lambda x: '{0:1.2f}%'.format(x)))
+
+    # fig_bar_season.update_layout(main_config, height=700)

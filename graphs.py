@@ -19,7 +19,8 @@ main_config = {
                "bgcolor": "rgba(0,0,0,0.5)"},
     "margin": {"l": 0, "r": 0, "t": 10, "b": 0}
 }
-months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, ' June': 6, 'July': 7, 'August': 8, 'September': 9,
+months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5,
+          ' June': 6, 'July': 7, 'August': 8, 'September': 9,
           'October': 10, 'November': 11, 'December': 12}
 
 red = "#CC0000"
@@ -100,9 +101,41 @@ df = pd.DataFrame(df_store)
 # ).reset_index().rename(columns={'DAY': 'COUNTING'})
 df_crimes = df.groupby(['PERIOD', 'TYPE'])['COUNTING'].sum(
 ).reset_index()
-
-
 fig_periodo = px.pie(df_crimes,
-                     names='PERIOD', values='COUNTING', color='COUNTING', template=template)
-
+                     names='PERIOD', values='COUNTING', color='COUNTING',
+                     template=template)
 fig_periodo.update_layout(main_config, height=200)
+
+
+#############################################################################
+#
+#
+#############################################################################
+
+df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
+df_store_map = df_map0.to_dict()
+df_map = pd.DataFrame(df_store_map)
+
+
+# Criando gráfico season - tela mapa =========================================
+
+fig_bar_season = px.histogram(df_map,
+                              x="NEIGHBOURHOOD",
+                              color="SEASON",
+                              barnorm="percent",
+                              text_auto=True,
+                              # color_discrete_sequence=["mediumvioletred", "seagreen"],
+                              )
+fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
+                             )
+fig_bar_season.update_xaxes(categoryorder='total descending')
+fig_bar_season.update_traces(
+    textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
+
+
+# MAPA
+df_map = pd.DataFrame(df_store_map)
+fig_map = px.scatter_mapbox(
+    df_map, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
+fig_map.update_layout(mapbox_style="open-street-map")
+fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
