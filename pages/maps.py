@@ -173,10 +173,15 @@ def update_map(data, year, crime, season, month):
 @app.callback(
     Output('crimes-season', 'figure'),
     [Input('drop-year', 'value'),
-     Input('drop-crime', 'value')]
+     Input('drop-crime', 'value'),
+     Input("new-val", "n_clicks"),]
 )
-def update_graph(year, crime):
+def update_graph(year, crime, n_clicks):
     # df = pd.DataFrame(data)
+    # patched_figure = Patch()
+
+    # if n_clicks < len(Others):
+
     aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
     initial_neigbhourhoods = sorted(aux.NEIGHBOURHOOD.unique())[:10]
     aux = aux.sort_values('NEIGHBOURHOOD')
