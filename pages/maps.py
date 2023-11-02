@@ -177,8 +177,11 @@ def update_map(data, year, crime, season, month):
 def update_graph(year, crime):
     # df = pd.DataFrame(data)
     aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
+    initial_neigbhourhoods = sorted(aux.NEIGHBOURHOOD.unique())[:10]
+    aux = aux.sort_values('NEIGHBOURHOOD')
+    mask = aux.NEIGHBOURHOOD.isin(Others)
 
-    fig_bar_season = px.histogram(aux,
+    fig_bar_season = px.histogram(aux[mask],
                                   x="NEIGHBOURHOOD",
                                   color="SEASON",
                                   barnorm="percent",
@@ -187,7 +190,7 @@ def update_graph(year, crime):
                                   )
     fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
                                  )
-    fig_bar_season.update_xaxes(categoryorder='total descending')
+    # fig_bar_season.update_xaxes(categoryorder='total descending')
     fig_bar_season.update_traces(
         textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
     return fig_bar_season

@@ -125,14 +125,27 @@ fig_map.update_layout(mapbox_style="open-street-map")
 fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 
-# Criando gráfico season
+# Criando gráfico season =================================================================
 df_map = pd.DataFrame(df_store_map)
 
-initial_neighbourhoods = ['Arbutus Ridge', 'Central Business District', 'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
-                          'Hastings-Sunrise', 'Kensington-Cedar Cottage', 'Kerrisdale']
+initial_neighbourhoods = ['Arbutus Ridge', 'Central Business District',
+                          'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
+                          'Hastings-Sunrise', 'Kensington-Cedar Cottage',
+                          'Kerrisdale', 'Killarney', 'Kitsilano']
 
+Others = ['Marpole', 'Mount Pleasant', 'Musqueam',
+          'Oakridge', 'Renfrew-Collingwood', 'Riley Park',
+          'Shaughnessy', 'South Cambie', 'Stanley Park',
+          'Strathcona', 'Sunset', 'Victoria-Fraserview',
+          'West End', 'West Point Grey']
 
-fig_bar_season = px.histogram(df_map,
+others_dict = {}
+for value, i in zip(range(len(Others)), Others):
+    others_dict[i] = value
+
+mask = df_map.NEIGHBOURHOOD.isin(initial_neighbourhoods)
+
+fig_bar_season = px.histogram(df_map[mask],
                               x="NEIGHBOURHOOD",
                               color="SEASON",
                               barnorm="percent",
