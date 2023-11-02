@@ -92,6 +92,7 @@ layout = dbc.Container(children=[
                             dbc.Row([
                                 dbc.Col([
                                     html.H6("Crimes georeferenced"),
+                                    html.Button("Show More", id="new-val"),
                                     dcc.Graph(id="crimes-season",
                                               className='scroll',
                                               figure=fig_bar_season)
