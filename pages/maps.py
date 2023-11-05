@@ -198,21 +198,42 @@ def update_graph(year, crime, n_clicks):
         n = n_clicks % len(Others)
         global initial
         initial.append(others_dict[n])
+        initial = sorted(initial)
+        print(initial)
+
         if n == 0:
             initial = bairro.copy()
 
         mask = aux.NEIGHBOURHOOD.isin(initial)
 
-        fig_bar_season = px.histogram(aux[mask].sort_values('NEIGHBOURHOOD'),
+        fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
                                       x="NEIGHBOURHOOD",
                                       color="SEASON",
                                       barnorm="percent",
                                       text_auto=True,
+
                                       )
         fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
         fig_bar_season.update_traces(
-            textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
+            textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
+
+        return fig_bar_season
+    else:
+        mask = aux.NEIGHBOURHOOD.isin(bairro)
+
+        fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
+                                      x="NEIGHBOURHOOD",
+                                      color="SEASON",
+                                      barnorm="percent",
+                                      text_auto=True,
+
+                                      )
+        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
+                                     )
+        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season.update_traces(
+            textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
         return fig_bar_season

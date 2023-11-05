@@ -132,12 +132,16 @@ initial_neighbourhoods = ['Arbutus Ridge', 'Central Business District',
                           'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
                           'Hastings-Sunrise', 'Kensington-Cedar Cottage',
                           'Kerrisdale', 'Killarney', 'Kitsilano']
+
+initial_neighbourhoods = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
 initial = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
 bairro = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
 
+# print(df_map.groupby(['TYPE', 'YEAR'])['NEIGHBOURHOOD'].size().reset_index())
+
 mask = df_map.NEIGHBOURHOOD.isin(initial_neighbourhoods)
 
-fig_bar_season = px.histogram(df_map[mask],
+fig_bar_season = px.histogram(df_map[mask].sort_values(['NEIGHBOURHOOD']),
                               x="NEIGHBOURHOOD",
                               color="SEASON",
                               barnorm="percent",
@@ -148,4 +152,4 @@ fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
                              )
 fig_bar_season.update_xaxes(categoryorder='total descending')
 fig_bar_season.update_traces(
-    textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
+    textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
