@@ -113,7 +113,7 @@ fig_periodo.update_layout(main_config, height=200)
 #############################################################################
 
 df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
-df_store_map = df_map0.to_dict()
+df_store_map = df_map0.sample(1000).to_dict()
 df_map = pd.DataFrame(df_store_map)
 
 
@@ -132,16 +132,8 @@ initial_neighbourhoods = ['Arbutus Ridge', 'Central Business District',
                           'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
                           'Hastings-Sunrise', 'Kensington-Cedar Cottage',
                           'Kerrisdale', 'Killarney', 'Kitsilano']
-
-Others = ['Marpole', 'Mount Pleasant', 'Musqueam',
-          'Oakridge', 'Renfrew-Collingwood', 'Riley Park',
-          'Shaughnessy', 'South Cambie', 'Stanley Park',
-          'Strathcona', 'Sunset', 'Victoria-Fraserview',
-          'West End', 'West Point Grey']
-
-others_dict = {}
-for value, i in zip(range(len(Others)), Others):
-    others_dict[i] = value
+initial = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
+bairro = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
 
 mask = df_map.NEIGHBOURHOOD.isin(initial_neighbourhoods)
 

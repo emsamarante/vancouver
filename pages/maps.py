@@ -1,4 +1,4 @@
-from dash import html, dcc
+from dash import html, dcc, Patch
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input, State
 import plotly.graph_objects as go
@@ -48,6 +48,7 @@ layout = dbc.Container(children=[
                                  style={"font-size": "80%"}),
                         dcc.Dropdown(
                             id="drop-crime",
+                            value="Mischief",
                             clearable=False
                         )
                     ])
@@ -124,7 +125,8 @@ def set_crimes_options(data, year):
     Output('drop-season', 'options'),
     [Input('dataset_map', 'data'),
      Input('drop-year', 'value'),
-     Input('drop-crime', 'value')]
+     Input('drop-crime', 'value')],
+    prevent_initial_call=True
 )
 def set_season_options(data, year, crime):
     df = pd.DataFrame(data)
@@ -139,7 +141,9 @@ def set_season_options(data, year, crime):
     [Input('dataset_map', 'data'),
      Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
-     Input('drop-season', 'value')]
+     Input('drop-season', 'value')],
+    prevent_initial_call=True
+
 )
 def set_month_options(data, year, crime, season):
     df = pd.DataFrame(data)
@@ -174,39 +178,57 @@ def update_map(data, year, crime, season, month):
     Output('crimes-season', 'figure'),
     [Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
-     Input("new-val", "n_clicks"),]
+     Input("new-val", "n_clicks"),],
+    prevent_initial_call=True
 )
 def update_graph(year, crime, n_clicks):
     # df = pd.DataFrame(data)
     # patched_figure = Patch()
 
-    # if n_clicks < len(Others):
+    Others = ['Marpole', 'Mount Pleasant', 'Musqueam',
+              'Oakridge', 'Renfrew-Collingwood', 'Riley Park',
+              'Shaughnessy', 'South Cambie', 'Stanley Park',
+              'Strathcona', 'Sunset', 'Victoria-Fraserview',
+              'West End', 'West Point Grey']
+
+    others_dict = {}
+    for i, value in zip(range(len(Others)), Others):
+        others_dict[i] = value
 
     aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
-    initial_neigbhourhoods = sorted(aux.NEIGHBOURHOOD.unique())[:10]
-    aux = aux.sort_values('NEIGHBOURHOOD')
-    mask = aux.NEIGHBOURHOOD.isin(Others)
 
-    fig_bar_season = px.histogram(aux[mask],
-                                  x="NEIGHBOURHOOD",
-                                  color="SEASON",
-                                  barnorm="percent",
-                                  text_auto=True,
-                                  # color_discrete_sequence=["mediumvioletred", "seagreen"],
-                                  )
-    fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
-                                 )
-    # fig_bar_season.update_xaxes(categoryorder='total descending')
-    fig_bar_season.update_traces(
-        textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
-    return fig_bar_season
+    if n_clicks <= len(Others):
+        initial.append(others_dict[n_clicks])
+        mask = aux.NEIGHBOURHOOD.isin(initial)
 
-    # aux_g = aux.groupby(['NEIGHBOURHOOD', 'SEASON']).size().reset_index()
-    # aux_g['percentage'] = aux.groupby(['NEIGHBOURHOOD', 'SEASON']).size().groupby(
-    #     level=0).apply(lambda x: 100 * x / float(x.sum())).values
-    # aux_g.columns = ['NEIGHBOURHOOD', 'SEASON', 'Counts', 'Percentage']
+        fig_bar_season = px.histogram(aux[mask].sort_values('NEIGHBOURHOOD'),
+                                      x="NEIGHBOURHOOD",
+                                      color="SEASON",
+                                      barnorm="percent",
+                                      text_auto=True,
+                                      # color_discrete_sequence=["mediumvioletred", "seagreen"],
+                                      )
+        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
+                                     )
+        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season.update_traces(
+            textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
 
-    # fig_bar_season = px.bar(aux_g,
-    #                         x='NEIGHBOURHOOD', y=['Counts'], color='SEASON', text=aux_g['Percentage'].apply(lambda x: '{0:1.2f}%'.format(x)))
+        return fig_bar_season
+    else:
+        mask = aux.NEIGHBOURHOOD.isin(bairro)
 
-    # fig_bar_season.update_layout(main_config, height=700)
+        fig_bar_season = px.histogram(aux[mask].sort_values('NEIGHBOURHOOD'),
+                                      x="NEIGHBOURHOOD",
+                                      color="SEASON",
+                                      barnorm="percent",
+                                      text_auto=True,
+                                      # color_discrete_sequence=["mediumvioletred", "seagreen"],
+                                      )
+        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
+                                     )
+        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season.update_traces(
+            textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
+
+        return fig_bar_season
