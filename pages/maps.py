@@ -182,23 +182,25 @@ def update_map(data, year, crime, season, month):
     prevent_initial_call=True
 )
 def update_graph(year, crime, n_clicks):
-    # df = pd.DataFrame(data)
-    # patched_figure = Patch()
-
     Others = ['Marpole', 'Mount Pleasant', 'Musqueam',
               'Oakridge', 'Renfrew-Collingwood', 'Riley Park',
               'Shaughnessy', 'South Cambie', 'Stanley Park',
               'Strathcona', 'Sunset', 'Victoria-Fraserview',
               'West End', 'West Point Grey']
 
-    others_dict = {}
-    for i, value in zip(range(len(Others)), Others):
-        others_dict[i] = value
-
     aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
 
-    if n_clicks <= len(Others):
-        initial.append(others_dict[n_clicks])
+    others_dict = {}
+    for i, value in zip(range(0, len(Others)), Others):
+        others_dict[i] = value
+
+    if n_clicks:
+        n = n_clicks % len(Others)
+        global initial
+        initial.append(others_dict[n])
+        if n == 0:
+            initial = bairro.copy()
+
         mask = aux.NEIGHBOURHOOD.isin(initial)
 
         fig_bar_season = px.histogram(aux[mask].sort_values('NEIGHBOURHOOD'),
@@ -206,26 +208,8 @@ def update_graph(year, crime, n_clicks):
                                       color="SEASON",
                                       barnorm="percent",
                                       text_auto=True,
-                                      # color_discrete_sequence=["mediumvioletred", "seagreen"],
                                       )
-        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
-                                     )
-        # fig_bar_season.update_xaxes(categoryorder='total descending')
-        fig_bar_season.update_traces(
-            textfont_size=12, textangle=0, cliponaxis=False, texttemplate='%{y:.0f}')
-
-        return fig_bar_season
-    else:
-        mask = aux.NEIGHBOURHOOD.isin(bairro)
-
-        fig_bar_season = px.histogram(aux[mask].sort_values('NEIGHBOURHOOD'),
-                                      x="NEIGHBOURHOOD",
-                                      color="SEASON",
-                                      barnorm="percent",
-                                      text_auto=True,
-                                      # color_discrete_sequence=["mediumvioletred", "seagreen"],
-                                      )
-        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent"
+        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
         fig_bar_season.update_traces(
