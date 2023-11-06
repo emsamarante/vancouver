@@ -80,8 +80,16 @@ layout = dbc.Container(children=[
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    html.H6("Crimes georeferenced"),
-                                    dcc.Graph(id='map')
+                                    html.H6(
+                                        "Percentage of Crimes in Each Season"),
+                                    dcc.Input(
+                                        id='input', type='text',
+                                        placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                                        debounce=False,
+                                        className="form-control"),
+                                    dcc.Graph(id="crimes-season",
+                                              className='scroll',
+                                              figure=fig_bar_season)
                                 ])
                             ])
                         ])
@@ -93,14 +101,7 @@ layout = dbc.Container(children=[
                             dbc.Row([
                                 dbc.Col([
                                     html.H6("Crimes georeferenced"),
-                                    dcc.Input(
-                                        id='input', type='text',
-                                        placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
-                                        debounce=False,
-                                        className="form-control"),
-                                    dcc.Graph(id="crimes-season",
-                                              className='scroll',
-                                              figure=fig_bar_season)
+                                    dcc.Graph(id='map')
                                 ])
                             ])
                         ])
