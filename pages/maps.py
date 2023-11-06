@@ -93,7 +93,11 @@ layout = dbc.Container(children=[
                             dbc.Row([
                                 dbc.Col([
                                     html.H6("Crimes georeferenced"),
-                                    html.Button("Show More", id="new-val"),
+                                    dcc.Input(
+                                        id='input', type='text',
+                                        placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                                        debounce=False,
+                                        className="form-control"),
                                     dcc.Graph(id="crimes-season",
                                               className='scroll',
                                               figure=fig_bar_season)
@@ -178,41 +182,35 @@ def update_map(data, year, crime, season, month):
     Output('crimes-season', 'figure'),
     [Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
-     Input("new-val", "n_clicks"),],
+     Input("input", "value"),],
     prevent_initial_call=True
 )
-def update_graph(year, crime, n_clicks):
-    Others = ['Marpole', 'Mount Pleasant', 'Musqueam',
-              'Oakridge', 'Renfrew-Collingwood', 'Riley Park',
-              'Shaughnessy', 'South Cambie', 'Stanley Park',
-              'Strathcona', 'Sunset', 'Victoria-Fraserview',
-              'West End', 'West Point Grey']
+def update_graph(year, crime, valor):
 
     aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
 
-    others_dict = {}
-    for i, value in zip(range(0, len(Others)), Others):
-        others_dict[i] = value
+    Others = aux.NEIGHBOURHOOD.unique()
 
-    if n_clicks:
-        n = n_clicks % len(Others)
-        global initial
-        initial.append(others_dict[n])
-        initial = sorted(initial)
-        print(initial)
+    if valor:
+        lista = []
+        letters = valor
+        all = letters.split("-")
+        for start_letter in all:
+            lista += [x for x in Others if x.startswith(start_letter.upper())]
 
-        if n == 0:
-            initial = bairro.copy()
+        lista = sorted(lista)
 
-        mask = aux.NEIGHBOURHOOD.isin(initial)
+        mask = aux.NEIGHBOURHOOD.isin(lista)
 
         fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
                                       x="NEIGHBOURHOOD",
                                       color="SEASON",
                                       barnorm="percent",
                                       text_auto=True,
+                                      color_discrete_sequence=[
+            "#80B912", "#333333", "#626262", "#A0A2A1"],
 
-                                      )
+        )
         fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
@@ -221,15 +219,17 @@ def update_graph(year, crime, n_clicks):
 
         return fig_bar_season
     else:
-        mask = aux.NEIGHBOURHOOD.isin(bairro)
+        mask = aux.NEIGHBOURHOOD.isin(initial)
 
         fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
                                       x="NEIGHBOURHOOD",
                                       color="SEASON",
                                       barnorm="percent",
                                       text_auto=True,
+                                      color_discrete_sequence=[
+            "#80B912", "#333333", "#626262", "#A0A2A1"],
 
-                                      )
+        )
         fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
