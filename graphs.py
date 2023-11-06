@@ -116,29 +116,26 @@ df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
 df_store_map = df_map0.sample(1000).to_dict()
 df_map = pd.DataFrame(df_store_map)
 
+# print(df_map.columns)
 
 # MAPA
+
+
 df_map = pd.DataFrame(df_store_map)
 fig_map = px.scatter_mapbox(
-    df_map, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
-fig_map.update_layout(mapbox_style="open-street-map")
+    df_map, lat="Lat", lon="Long", hover_name="TYPE",
+    color='MONTH', zoom=11, height=700)
+fig_map.update_layout(mapbox_style="carto-darkmatter")
 fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 
 # Criando gráfico season =================================================================
 df_map = pd.DataFrame(df_store_map)
 
-# print(sorted(df_map.NEIGHBOURHOOD.unique()))
-
 initial = ['Arbutus Ridge', 'Central Business District',
            'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
            'Hastings-Sunrise']
 
-# initial_neighbourhoods = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
-# initial = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
-# bairro = sorted(df_map.NEIGHBOURHOOD.unique())[:10]
-
-# print(df_map.groupby(['TYPE', 'YEAR'])['NEIGHBOURHOOD'].size().reset_index())
 
 mask = df_map.NEIGHBOURHOOD.isin(initial)
 

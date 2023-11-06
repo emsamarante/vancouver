@@ -164,16 +164,31 @@ def set_month_options(data, year, crime, season):
      Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
      Input('drop-season', 'value'),
-     Input('drop-month', 'value')]
+     Input('drop-month', 'value'),],
 )
 def update_map(data, year, crime, season, month):
     df = pd.DataFrame(data)
+
+    # aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
+    #     df.SEASON.isin([season])) & (df.MONTH.isin([month]))]
     aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
-        df.SEASON.isin([season])) & (df.MONTH.isin([month]))]
+        df.SEASON.isin([season]))]
+
+    # discrete_colors = ["blue", "green", "red", "purple", "orange"]
+    # colors_dict = {}
+    # num_months = aux.MONTH.nunique()
+    # months = aux.MONTH.unique()
+    # count = 0
+    # print(f"{num_months} e {months}")
+    # # while count <= num_months:
+    # #     colors_dict[months[count]] = discrete_colors[count]
+    # #     count += 1
 
     fig_map = px.scatter_mapbox(
-        aux, lat="Lat", lon="Long", hover_name="TYPE", color='NEIGHBOURHOOD', zoom=11, height=700)
-    fig_map.update_layout(mapbox_style="open-street-map")
+        aux, lat="Lat", lon="Long", hover_name="TYPE",
+        color='MONTH', zoom=11, height=700,
+        color_discrete_map=None)
+    fig_map.update_layout(mapbox_style='carto-darkmatter')
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig_map
 
