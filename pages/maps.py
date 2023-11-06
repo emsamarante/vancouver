@@ -41,7 +41,7 @@ layout = dbc.Container(children=[
                             clearable=False
                         )
                     ])
-                ], lg=3),
+                ], lg=2),
                 dbc.Col([
                     html.Div([
                         html.Div(["Choose the crime"],
@@ -52,7 +52,7 @@ layout = dbc.Container(children=[
                             clearable=False
                         )
                     ])
-                ], lg=3),
+                ], lg=2),
                 dbc.Col([
                     html.Div([
                         html.Div(["Choose the season"],
@@ -62,7 +62,7 @@ layout = dbc.Container(children=[
                             clearable=False
                         )
                     ])
-                ], lg=3),
+                ], lg=4),
                 dbc.Col([
                     html.Div([
                         html.Div(["Choose the month"],
@@ -72,7 +72,7 @@ layout = dbc.Container(children=[
                             clearable=False
                         )
                     ])
-                ], lg=3)
+                ], lg=4)
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
                 dbc.Col([
@@ -94,7 +94,7 @@ layout = dbc.Container(children=[
                             ])
                         ])
                     ], style=tab_card)
-                ], lg=6),
+                ], lg=4),
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
@@ -106,7 +106,7 @@ layout = dbc.Container(children=[
                             ])
                         ])
                     ], style=tab_card)
-                ], lg=6)
+                ], lg=8)
             ], className='g-2 my-auto',)
         ]),
     ])
