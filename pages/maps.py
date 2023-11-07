@@ -205,11 +205,40 @@ def update_map(data, year, crime, season):
     # #     colors_dict[months[count]] = discrete_colors[count]
     # #     count += 1
 
+    print(f"{season} - {aux.MONTH.unique()}")
+    print(aux.MONTH.unique())
+    colors = {1: '#535454', 2: '#A7A8A8', 3: "#FCFFFF", 4: '#402404',
+              5: '#804809', 6: "#113140", 7: '#3493BF', 8: '#45C4FF',
+              9: "#311440", 10: '#632980', 11: '#943DBF', 12: '#C552FF'}
+
+    markers = {1: 'circle',
+               2: 'square',
+               3: 'diamond',
+               4: 'cross',
+               5: 'circle',
+               6: 'square',
+               7: 'diamond',
+               8: 'cross',
+               9: 'circle',
+               10: 'square',
+               11: 'diamond',
+               12: 'cross',
+               }
+    # aux.loc[:, 'markers'] = None
+    aux.loc[:, 'markers'] = aux.MONTH.map(markers)
+    # print(colors)
+
     fig_map = px.scatter_mapbox(
         aux, lat="Lat", lon="Long", hover_name="TYPE",
-        color='MONTH', zoom=11, height=710,
-        color_discrete_map=None)
+        zoom=11, height=710,
+    )
     fig_map.update_layout(mapbox_style='carto-darkmatter')
+    fig_map.update_traces(marker=dict(
+        symbol=aux['markers'],
+        size=11
+    ),
+    )
+    # color=aux['MONTH'].map(colors).astype(str),
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig_map
 
@@ -306,7 +335,8 @@ def update_graph(year, crime, valor):
         ).reset_index().rename(columns={"Lat": "Counts"}),
             x='NEIGHBOURHOOD', y='Counts', color='SEASON',
             color_discrete_sequence=[
-            "#80B912", "#333333", "#626262", "#A0A2A1"])
+            "#80B912", "#333333", "#626262", "#A0A2A1"],
+        )
 
         fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
                                          )
@@ -322,7 +352,8 @@ def update_graph(year, crime, valor):
         ).reset_index().rename(columns={"Lat": "Counts"}),
             x='NEIGHBOURHOOD', y='Counts', color='SEASON',
             color_discrete_sequence=[
-            "#80B912", "#333333", "#626262", "#A0A2A1"])
+            "#80B912", "#333333", "#626262", "#A0A2A1"],
+        )
 
         fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
                                          )
