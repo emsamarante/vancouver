@@ -129,7 +129,7 @@ fig_map.update_layout(mapbox_style="carto-darkmatter")
 fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 
-# Criando gráfico season =================================================================
+# Criando gráfico season relative=================================================================
 df_map = pd.DataFrame(df_store_map)
 
 initial = ['Arbutus Ridge', 'Central Business District',
@@ -147,8 +147,32 @@ fig_bar_season = px.histogram(df_map[mask].sort_values(['NEIGHBOURHOOD', "SEASON
                               color_discrete_sequence=[
                                   "#80B912", "#333333", "#626262", "#A0A2A1"],
                               )
-fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None
+fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None
                              )
 fig_bar_season.update_xaxes(categoryorder='total descending')
 fig_bar_season.update_traces(
+    textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
+
+# Criando gráfico season absolute=================================================================
+df_map = pd.DataFrame(df_store_map)
+
+initial = ['Arbutus Ridge', 'Central Business District',
+           'Dunbar-Southlands', 'Fairview', 'Grandview-Woodland',
+           'Hastings-Sunrise']
+
+
+mask = df_map.NEIGHBOURHOOD.isin(initial)
+
+fig_bar_season_abs = px.histogram(df_map[mask].sort_values(['NEIGHBOURHOOD', "SEASON"]),
+                                  x="NEIGHBOURHOOD",
+                                  color="SEASON",
+                                  barnorm="percent",
+                                  text_auto=True,
+                                  color_discrete_sequence=[
+                                  "#80B912", "#333333", "#626262", "#A0A2A1"],
+                                  )
+fig_bar_season_abs.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None
+                                 )
+fig_bar_season_abs.update_xaxes(categoryorder='total descending')
+fig_bar_season_abs.update_traces(
     textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')

@@ -30,6 +30,18 @@ layout = dbc.Container(children=[
         dbc.Col([
             dbc.Row([
                 dbc.Col([
+                    html.Div(([
+                        html.Div(["Choose the neighbourhoods"],
+                                 style={"font-size": "80%"}),
+                        dcc.Input(
+                            id='input', type='text',
+                            placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                            debounce=False,
+                            className="form-control"),
+
+                    ])),
+                ], lg=4),
+                dbc.Col([
                     html.Div([
                         html.Div(["Choose the year"], style={
                                  "font-size": "80%"}),
@@ -63,16 +75,6 @@ layout = dbc.Container(children=[
                         )
                     ])
                 ], lg=4),
-                dbc.Col([
-                    html.Div([
-                        html.Div(["Choose the month"],
-                                 style={"font-size": "80%"}),
-                        dcc.Dropdown(
-                            id="drop-month",
-                            clearable=False
-                        )
-                    ])
-                ], lg=4)
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
                 dbc.Col([
@@ -82,21 +84,21 @@ layout = dbc.Container(children=[
                                 dbc.CardBody([
                                     dbc.Row([
                                         dbc.Col([
-                                            html.Div(([
-                                                html.Div(["Choose the neighbourhoods"],
-                                                         style={"font-size": "80%"}),
-                                                dcc.Input(
-                                                    id='input', type='text',
-                                                    placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
-                                                    debounce=False,
-                                                    className="form-control"),
+                                            # html.Div(([
+                                            #     html.Div(["Choose the neighbourhoods"],
+                                            #              style={"font-size": "80%"}),
+                                            #     dcc.Input(
+                                            #         id='input', type='text',
+                                            #         placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                                            #         debounce=False,
+                                            #         className="form-control"),
 
-                                            ])),
+                                            # ])),
                                             html.H6(
                                                 "Percentage of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season",
                                                       className='scroll',
-                                                      figure=fig_bar_season)
+                                                      figure=fig_bar_season_abs)
                                         ])
                                     ])
                                 ])
@@ -111,7 +113,7 @@ layout = dbc.Container(children=[
                                         dbc.Col([
                                             html.H6(
                                                 "Percentage of Crimes in Each Season"),
-                                            dcc.Graph(id="crimes-season",
+                                            dcc.Graph(id="crimes-season-abs",
                                                       className='scroll',
                                                       figure=fig_bar_season)
                                         ])
@@ -120,25 +122,25 @@ layout = dbc.Container(children=[
                             ], style=tab_card)
                         ])
                     ], className='g-2 my-auto', style={'margin-top': '9px'}),
-
-
-
                 ], lg=4),
                 dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            dbc.Row([
-                                dbc.Col([
-                                    html.H6("Crimes georeferenced"),
-                                    dcc.Graph(id='map')
-                                ])
+                    dbc.Row([
+                        dbc.Card([
+                            dbc.CardBody([
+                                dbc.Row([
+                                    dbc.Col([
+                                        html.H6("Crimes georeferenced"),
+                                        dcc.Graph(id='map')
+                                    ])
+                                ], className='g-2 my-auto', style={'margin-top': '9px'})
                             ])
-                        ])
-                    ], style=tab_card)
+                        ], style=tab_card)
+                    ], className='g-2 my-auto', style={'margin-top': '9px'})
+
                 ], lg=8)
             ], className='g-2 my-auto',)
         ]),
-    ])
+    ], className='g-2 my-auto', style={'margin-top': '9px'})
 ], fluid=True)
 
 
@@ -169,21 +171,21 @@ def set_season_options(data, year, crime):
     return [{'label': i, 'value': i} for i in seasons]
 
 
-@cache.memoize(timeout=TIMEOUT)  # in seconds
-@app.callback(
-    Output('drop-month', 'options'),
-    [Input('dataset_map', 'data'),
-     Input('drop-year', 'value'),
-     Input('drop-crime', 'value'),
-     Input('drop-season', 'value')],
-    prevent_initial_call=True
+# @cache.memoize(timeout=TIMEOUT)  # in seconds
+# @app.callback(
+#     Output('drop-month', 'options'),
+#     [Input('dataset_map', 'data'),
+#      Input('drop-year', 'value'),
+#      Input('drop-crime', 'value'),
+#      Input('drop-season', 'value')],
+#     prevent_initial_call=True
 
-)
-def set_month_options(data, year, crime, season):
-    df = pd.DataFrame(data)
-    months = sorted(df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
-        df.SEASON.isin([season]))]['MONTH'].unique())
-    return [{'label': i, 'value': i} for i in months]
+# )
+# def set_month_options(data, year, crime, season):
+#     df = pd.DataFrame(data)
+#     months = sorted(df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
+#         df.SEASON.isin([season]))]['MONTH'].unique())
+#     return [{'label': i, 'value': i} for i in months]
 
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
@@ -192,10 +194,10 @@ def set_month_options(data, year, crime, season):
     [Input('dataset_map', 'data'),
      Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
-     Input('drop-season', 'value'),
-     Input('drop-month', 'value'),],
+     Input('drop-season', 'value'),]
+    #  Input('drop-month', 'value'),],
 )
-def update_map(data, year, crime, season, month):
+def update_map(data, year, crime, season):
     df = pd.DataFrame(data)
 
     # aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
@@ -256,7 +258,7 @@ def update_graph(year, crime, valor):
             "#80B912", "#333333", "#626262", "#A0A2A1"],
 
         )
-        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
+        fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
         fig_bar_season.update_traces(
@@ -275,10 +277,67 @@ def update_graph(year, crime, valor):
             "#80B912", "#333333", "#626262", "#A0A2A1"],
 
         )
-        fig_bar_season.update_layout(main_config, height=700, yaxis_title="Percent", xaxis_title=None,
+        fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None,
                                      )
         # fig_bar_season.update_xaxes(categoryorder='total descending')
         fig_bar_season.update_traces(
             textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
         return fig_bar_season
+
+
+# px Bar absolute
+@cache.memoize(timeout=TIMEOUT)  # in seconds
+@app.callback(
+    Output('crimes-season-abs', 'figure'),
+    [Input('drop-year', 'value'),
+     Input('drop-crime', 'value'),
+     Input("input", "value"),],
+    prevent_initial_call=True
+)
+def update_graph(year, crime, valor):
+
+    aux = df_map[(df_map.YEAR.isin([year])) & (df_map.TYPE.isin([crime]))]
+
+    Others = aux.NEIGHBOURHOOD.unique()
+
+    if valor:
+        lista = []
+        letters = valor
+        all = letters.split("-")
+        for start_letter in all:
+            lista += [x for x in Others if x.startswith(start_letter.upper())]
+
+        lista = sorted(lista)
+
+        mask = aux.NEIGHBOURHOOD.isin(lista)
+
+        fig_bar_season_abs = px.bar(aux[mask].groupby(['NEIGHBOURHOOD', 'SEASON'])['Lat'].size(
+        ).reset_index().rename(columns={"Lat": "Counts"}),
+            x='NEIGHBOURHOOD', y='Counts', color='SEASON',
+            color_discrete_sequence=[
+            "#80B912", "#333333", "#626262", "#A0A2A1"])
+
+        fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
+                                         )
+        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season_abs.update_traces(
+            textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
+
+        return fig_bar_season_abs
+    else:
+        mask = aux.NEIGHBOURHOOD.isin(initial)
+
+        fig_bar_season_abs = px.bar(aux[mask].groupby(['NEIGHBOURHOOD', 'SEASON'])['Lat'].size(
+        ).reset_index().rename(columns={"Lat": "Counts"}),
+            x='NEIGHBOURHOOD', y='Counts', color='SEASON',
+            color_discrete_sequence=[
+            "#80B912", "#333333", "#626262", "#A0A2A1"])
+
+        fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
+                                         )
+        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season_abs.update_traces(
+            textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
+
+        return fig_bar_season_abs
