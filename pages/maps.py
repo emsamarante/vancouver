@@ -76,24 +76,53 @@ layout = dbc.Container(children=[
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
                 dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            dbc.Row([
-                                dbc.Col([
-                                    html.H6(
-                                        "Percentage of Crimes in Each Season"),
-                                    dcc.Input(
-                                        id='input', type='text',
-                                        placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
-                                        debounce=False,
-                                        className="form-control"),
-                                    dcc.Graph(id="crimes-season",
-                                              className='scroll',
-                                              figure=fig_bar_season)
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Card([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        dbc.Col([
+                                            html.Div(([
+                                                html.Div(["Choose the neighbourhoods"],
+                                                         style={"font-size": "80%"}),
+                                                dcc.Input(
+                                                    id='input', type='text',
+                                                    placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                                                    debounce=False,
+                                                    className="form-control"),
+
+                                            ])),
+                                            html.H6(
+                                                "Percentage of Crimes in Each Season"),
+                                            dcc.Graph(id="crimes-season",
+                                                      className='scroll',
+                                                      figure=fig_bar_season)
+                                        ])
+                                    ])
                                 ])
-                            ])
+                            ], style=tab_card)
                         ])
-                    ], style=tab_card)
+                    ], className='g-2 my-auto', style={'margin-top': '9px'}),
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Card([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        dbc.Col([
+                                            html.H6(
+                                                "Percentage of Crimes in Each Season"),
+                                            dcc.Graph(id="crimes-season",
+                                                      className='scroll',
+                                                      figure=fig_bar_season)
+                                        ])
+                                    ])
+                                ])
+                            ], style=tab_card)
+                        ])
+                    ], className='g-2 my-auto', style={'margin-top': '9px'}),
+
+
+
                 ], lg=4),
                 dbc.Col([
                     dbc.Card([
