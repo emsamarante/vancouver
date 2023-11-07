@@ -84,16 +84,6 @@ layout = dbc.Container(children=[
                                 dbc.CardBody([
                                     dbc.Row([
                                         dbc.Col([
-                                            # html.Div(([
-                                            #     html.Div(["Choose the neighbourhoods"],
-                                            #              style={"font-size": "80%"}),
-                                            #     dcc.Input(
-                                            #         id='input', type='text',
-                                            #         placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
-                                            #         debounce=False,
-                                            #         className="form-control"),
-
-                                            # ])),
                                             html.H6(
                                                 "Percentage of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season",
@@ -217,7 +207,7 @@ def update_map(data, year, crime, season):
 
     fig_map = px.scatter_mapbox(
         aux, lat="Lat", lon="Long", hover_name="TYPE",
-        color='MONTH', zoom=11, height=700,
+        color='MONTH', zoom=11, height=710,
         color_discrete_map=None)
     fig_map.update_layout(mapbox_style='carto-darkmatter')
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})

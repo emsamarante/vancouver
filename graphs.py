@@ -124,7 +124,7 @@ df_map = pd.DataFrame(df_store_map)
 df_map = pd.DataFrame(df_store_map)
 fig_map = px.scatter_mapbox(
     df_map, lat="Lat", lon="Long", hover_name="TYPE",
-    color='MONTH', zoom=11, height=700)
+    color='MONTH', zoom=11, height=710)
 fig_map.update_layout(mapbox_style="carto-darkmatter")
 fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
