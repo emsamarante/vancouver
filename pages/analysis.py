@@ -291,21 +291,19 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
-# ====================== CARD indicador 2
+# Amount of crimes by month and type =====
 @app.callback(
     Output('id-card-indicator-2', 'figure'),
     [Input('dataset', 'data'),
      Input('drop-month-1', 'value'),
      Input('drop-crime-1', 'value')]
-    #  Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 def update_graph(data, month, crime_selected):
-    # template = template_theme1 if toggle else template_theme2
+
     df = pd.DataFrame(data)
     year = 2022
-    # datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']].rename(
-    #     columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY', 'HOUR': 'HOUR', 'MINUTE': 'MINUTE'}))
+
     datetime_series = pd.to_datetime(df[['YEAR', 'MONTH', 'DAY']].rename(
         columns={'YEAR': 'YEAR', 'MONTH': 'MONTH', 'DAY': 'DAY'}))
 
@@ -314,7 +312,7 @@ def update_graph(data, month, crime_selected):
         'COUNTING'].sum().reset_index()
     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
-    # Limpando as variáveis"
+
     del df
 
     dff = dff.drop(['YEAR', 'MONTH'], axis=1)
@@ -325,7 +323,6 @@ def update_graph(data, month, crime_selected):
     dff['COUNTING'] = dff['COUNTING'].astype(int)
     df_filtered = dff[dff.TYPE.isin([crime_selected])]
 
-# Limpando as variáveis"
     del dff
 
     df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
@@ -344,17 +341,15 @@ def update_graph(data, month, crime_selected):
     return fig
 
 
-# # ====================== CARD indicador 2
+# Amount of crimes by year and type ===
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('id-card-indicator-1', 'figure'),
     [Input('dataset', 'data'),
      Input('drop-year-1', 'value'),
      Input('drop-crime-1', 'value')]
-    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 def update_graph(data, year, crime):
-    # template = template_theme1 if toggle else template_theme2
     df = pd.DataFrame(data)
     dff = df[df['TYPE'] == crime]
     aux = dff.groupby(['YEAR']).sum()['COUNTING'].reset_index()
@@ -374,6 +369,8 @@ def update_graph(data, year, crime):
     fig_indicator.update_layout(main_config, height=150, template=template)
     return fig_indicator
 
+# Crime by neighbourhood and type ===
+
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
@@ -385,15 +382,11 @@ def update_graph(data, year, crime):
     prevent_initial_call=False
 )
 def update_graph(year, crime):
-    # template = template_theme1 if toggle else template_theme2
-
     dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
     aux = dff.copy()
     average = dff.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
     ).reset_index().sort_values(['COUNTING'])
-
-    # print(dff.columns)
 
     average_value = average.loc[0, 'COUNTING']
 
@@ -406,10 +399,7 @@ def update_graph(year, crime):
     fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
                      title=None, color='COUNTING',
                      color_continuous_scale=colorscale_res)
-    #  color_continuous_scale=[(0.00, "red"),   (0.33, "red"),
-    #                          (0.33, "green"), (0.66, "green"),
-    #                          (0.66, "blue"),  (1.00, "blue")])
-    # , color_continuous_scale="fall"
+
     fig_bar.add_vline(x=average_value, line_width=3,
                       line_dash="dash", line_color="white", label=dict(text=None))
     fig_bar.update_layout(main_config, height=150,
@@ -430,9 +420,7 @@ def update_graph(year, crime):
 
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
 
-    # print(aux[mask]['COUNTING'].max())
-    # value_max = aux[mask]['COUNTING'].max()
-
+    # Fig in modal element
     fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
                         title=None, color='COUNTING', color_continuous_scale=colorscale_res)
     fig_detail.update_layout(main_config, height=350,
@@ -449,19 +437,14 @@ def update_graph(year, crime):
                               ),
                               align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                               x=0.6, y=0.1, showarrow=False)
-    # fig_detail.update_traces(marker=dict(
-    #     colorscale=colorscale))
-
     text = f"Os bairros são: {others_bairros}"
     text = None
-    # print(template)
-    # print(text)
 
     del dff
 
     return [fig_bar, text, fig_detail]
 
-# # ====================== Grafico de linha
+# Crimes Over Year ===
 
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
@@ -469,11 +452,9 @@ def update_graph(year, crime):
     Output("id-graph-line-1", 'figure'),
     [Input('drop-crime-3', 'value'),]
 )
-# @cache.memoize(timeout=10)  # in seconds
 def update_graph(crimes):
-    # template = template_theme1 if toggle else template_theme2
     if crimes is []:
-        # Evita a execução do callback se o valor for None
+        # Avoid crash
         raise dash.exceptions.PreventUpdate
     else:
 
@@ -481,8 +462,6 @@ def update_graph(crimes):
         fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
                                   color='TYPE',
                                   )
-        color_discrete_sequence = ["#3F5A42", "#818F6E", "#8F9B78", "#B4B890", "#CECDA2", "#F4EBBB",
-                                   "#F3DCAC", "#F1CE9E", "#E7A575", "#E9AB7B", "#E09161"]
         # updates
         fig_multilinhas.update_layout(
             main_config, height=220, xaxis_title=None, yaxis_title=None)
@@ -490,21 +469,18 @@ def update_graph(crimes):
         del mask
         return fig_multilinhas
 
-# # ======================= Grafico comparacao
+# Direct Comparison ==
 
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     [Output("id-graph-comparison", 'figure'),
      Output('desc_comparison', 'children')],
-    [Input('dataset', 'data'),
-     Input('drop-crime-1', 'value'),
+    [Input('drop-crime-1', 'value'),
      Input('drop-bairro-1', 'value'),
      Input('drop-bairro-2', 'value')]
-    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
-# @cache.memoize(timeout=10)  # in seconds
-def update_graph(data, crime, bairro1, bairro2):
+def update_graph(crime, bairro1, bairro2):
 
     datetime_series = pd.to_datetime(
         df[['YEAR', 'MONTH', 'DAY']])
@@ -526,19 +502,19 @@ def update_graph(data, crime, bairro1, bairro2):
     del df1, df2, df_bairro1, df_bairro2
 
     fig = go.Figure()
-    # Toda linha
+    # The entire line
     fig.add_scattergl(
         name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
     line = dict(color='#3D5941')
-    # Abaixo de zero
+    # below of zero
     fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
         df_final['COUNTING'] > 0.00000), )
     line = dict(color='#CA562C')
     # Updates
     del df_final
     fig.update_layout(main_config, height=180)
-    # fig.update_yaxes(range = [-0.7,0.7])
-    # Annotations pra mostrar quem é o mais barato
+
+    # Annotations to show which is safer
     fig.add_annotation(text=f'{bairro1} had more crimes',
                        xref="paper", yref="paper",
                        font=dict(
@@ -557,12 +533,11 @@ def update_graph(data, crime, bairro1, bairro2):
                        ),
                        align="center", bgcolor="rgba(0,0,0,0.5)", opacity=0.8,
                        x=0.5, y=0.25, showarrow=False)
-    # Definindo o texto
     text_comparison = f"Comparison between {bairro2} and {bairro1}. If the line is above the x-axis, it indicates that {bairro2} had fewer selected criminal events; otherwise, {bairro1} had the smallest value."
     return [fig, text_comparison]
 
 
-# #======================= Gráfico estações
+# Analysis by season ===
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
@@ -575,31 +550,27 @@ def update_graph(crime, year):
 
     fig_estacoes = px.bar(dff.groupby('SEASON')['PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'}),
                           x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
-    color_continuous_scale = 'fall'
     fig_estacoes.update_layout(
         main_config, height=170, xaxis_title=None, yaxis_title=None, template=template)
-
     return fig_estacoes
 
 
-# #======================= Gráfico Periodo
+# Analysis by period of day ===
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("id-periodo", "figure"),
     [Input('drop-crime-1', 'value'),]
-    # Input(ThemeSwitchAIO.ids.switch("theme"), "value")]
 )
 def update_graph(crime):
-    # template = template_theme1 if toggle else template_theme2
-
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
     fig_periodo = px.pie(aux,
                          names='PERIOD', values='COUNTING', color='COUNTING', template=template)
-    color_discrete_sequence = ['#3D5941', '#CA562C']
     fig_periodo.update_layout(main_config, height=170)
 
     return fig_periodo
+
+# Modal element ===
 
 
 @cache.memoize(timeout=TIMEOUT)  # in seconds

@@ -1,10 +1,11 @@
 import plotly.express as px
-import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 load_figure_template("cyborg")
 
+
+# Utils
 
 config_graph = {"displayModeBar": False, "showTips": False}
 tab_card = {'height': '100%'}
@@ -32,19 +33,17 @@ colorscale_res = [
     (0, blue),   # Cor para valores mínimos
     (1, red),    # Cor para valores máximos
 ]
-colorscale = [
-    (0, blue),   # Cor para valores mínimos
-    (0.33, green),
-    (0.66, orange),
-    (1, red),    # Cor para valores máximos
-]
 
 
-template_theme1 = "cyborg"
-template_theme2 = "cyborg"
-url_theme1 = dbc.themes.CYBORG
-url_theme2 = dbc.themes.CYBORG
 template = 'cyborg'
+
+
+#############################################################################
+#
+#   Screen - Analysis
+#
+#############################################################################
+
 
 # ================================ data
 df0 = pd.read_csv("data/dataset_agg.csv", index_col=0)
@@ -54,7 +53,6 @@ df0 = pd.read_csv("data/dataset_agg.csv", index_col=0)
 df_store = df0.to_dict()
 df = pd.DataFrame(df_store)
 
-# print(df.columns)
 
 # Criando gráfico de barra ===========================================
 aux_bar = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).sum()[
@@ -80,11 +78,6 @@ fig_multilinhas.update_layout(
     main_config, height=230, xaxis_title=None, template=template)
 
 
-# Criando gráfico comparison ==========================================
-#
-#
-#
-
 # Criando gráfico estacoes ==========================================
 df = pd.DataFrame(df_store)
 fig_estacoes = px.bar(df.groupby('SEASON')['COUNTING'].sum().reset_index(),
@@ -95,10 +88,6 @@ fig_estacoes.update_layout(main_config, height=200,
 
 # Criando gráfico período ===========================================
 df = pd.DataFrame(df_store)
-# df.loc[:, 'PERIOD'] = None
-# df.loc[:, 'PERIOD'] = np.where(df.loc[:, 'HOUR'] <= 11, 'AM', 'PM')
-# df_crimes = df.groupby(['PERIOD', 'TYPE'])['DAY'].count(
-# ).reset_index().rename(columns={'DAY': 'COUNTING'})
 df_crimes = df.groupby(['PERIOD', 'TYPE'])['COUNTING'].sum(
 ).reset_index()
 fig_periodo = px.pie(df_crimes,
@@ -109,6 +98,7 @@ fig_periodo.update_layout(main_config, height=200)
 
 #############################################################################
 #
+#   Screen - Maps
 #
 #############################################################################
 
@@ -116,11 +106,8 @@ df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
 df_store_map = df_map0.sample(1000).to_dict()
 df_map = pd.DataFrame(df_store_map)
 
-# print(df_map.columns)
 
-# MAPA
-
-
+# Maps
 df_map = pd.DataFrame(df_store_map)
 fig_map = px.scatter_mapbox(
     df_map, lat="Lat", lon="Long", hover_name="TYPE",
@@ -129,7 +116,7 @@ fig_map.update_layout(mapbox_style="carto-darkmatter")
 fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 
-# Criando gráfico season relative=================================================================
+# relative bar
 df_map = pd.DataFrame(df_store_map)
 
 initial = ['Arbutus Ridge', 'Central Business District',
@@ -153,7 +140,7 @@ fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xax
 fig_bar_season.update_traces(
     textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
-# Criando gráfico season absolute=================================================================
+# absolute bar
 df_map = pd.DataFrame(df_store_map)
 
 initial = ['Arbutus Ridge', 'Central Business District',
