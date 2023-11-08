@@ -56,13 +56,13 @@ df = pd.DataFrame(df_store)
 
 # Criando gráfico de barra ===========================================
 aux_bar = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).sum()[
-    'COUNTING'].reset_index()
+    'Counts'].reset_index()
 
-aux_bar = aux_bar.sort_values(['COUNTING', 'NEIGHBOURHOOD'],
+aux_bar = aux_bar.sort_values(['Counts', 'NEIGHBOURHOOD'],
                               ascending=False).reset_index()
 
 
-fig_bar = px.bar(aux_bar, x='COUNTING', y='NEIGHBOURHOOD',
+fig_bar = px.bar(aux_bar, x='Counts', y='NEIGHBOURHOOD',
                  title=None, template=template)
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None, template=template)
@@ -70,9 +70,9 @@ fig_bar.update_layout(main_config, height=170,
 # Gráfico multilinhas =================================================
 df = pd.DataFrame(df_store)
 aux_multi = df.groupby(['TYPE', 'YEAR'])['PERIOD'].count(
-).reset_index().rename(columns={'PERIOD': 'COUNTING'})
+).reset_index().rename(columns={'PERIOD': 'Counts'})
 
-fig_multilinhas = px.line(aux_multi, x='YEAR', y='COUNTING',
+fig_multilinhas = px.line(aux_multi, x='YEAR', y='Counts',
                           color='TYPE')
 fig_multilinhas.update_layout(
     main_config, height=230, xaxis_title=None, template=template)
@@ -80,18 +80,18 @@ fig_multilinhas.update_layout(
 
 # Criando gráfico estacoes ==========================================
 df = pd.DataFrame(df_store)
-fig_estacoes = px.bar(df.groupby('SEASON')['COUNTING'].sum().reset_index(),
-                      x='SEASON', y='COUNTING')
+fig_estacoes = px.bar(df.groupby('SEASON')['Counts'].sum().reset_index(),
+                      x='SEASON', y='Counts')
 
 fig_estacoes.update_layout(main_config, height=200,
                            xaxis_title=None, template=template)
 
 # Criando gráfico período ===========================================
 df = pd.DataFrame(df_store)
-df_crimes = df.groupby(['PERIOD', 'TYPE'])['COUNTING'].sum(
+df_crimes = df.groupby(['PERIOD', 'TYPE'])['Counts'].sum(
 ).reset_index()
 fig_periodo = px.pie(df_crimes,
-                     names='PERIOD', values='COUNTING', color='COUNTING',
+                     names='PERIOD', values='Counts', color='Counts',
                      template=template)
 fig_periodo.update_layout(main_config, height=200)
 

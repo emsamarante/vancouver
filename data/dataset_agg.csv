@@ -1,4 +1,4 @@
-,YEAR,MONTH,DAY,TYPE,PERIOD,SEASON,NEIGHBOURHOOD,COUNTING
+,YEAR,MONTH,DAY,TYPE,PERIOD,SEASON,NEIGHBOURHOOD,Counts
 0,2012,1,1,Break and Enter Commercial,AM,Winter,Central Business District,27
 1,2012,1,1,Break and Enter Commercial,AM,Winter,Dunbar-Southlands,1
 2,2012,1,1,Break and Enter Commercial,AM,Winter,Fairview,10

@@ -263,7 +263,7 @@ def update_graph(data, month, crime_selected):
 
     df.loc[:, 'DATE'] = datetime_series
     df_crimes = df.groupby([pd.PeriodIndex(df['DATE'], freq="M"), 'YEAR', 'MONTH', 'TYPE'])[
-        'COUNTING'].sum().reset_index()
+        'Counts'].sum().reset_index()
     dff = df_crimes[(df_crimes.YEAR.isin([year])) & (
         (df_crimes.MONTH.isin([month])) | (df_crimes.MONTH.isin([month-1])))]
 
@@ -274,19 +274,19 @@ def update_graph(data, month, crime_selected):
         for date in dff.DATE.unique():
             if dff[(dff['DATE'] == date) & (dff['TYPE'] == crime)].empty:
                 dff.loc[dff.index[-1] + 1, :] = [date, crime, 0]
-    dff['COUNTING'] = dff['COUNTING'].astype(int)
+    dff['Counts'] = dff['Counts'].astype(int)
     df_filtered = dff[dff.TYPE.isin([crime_selected])]
 
     del dff
 
-    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'COUNTING'])
+    df_filtered = df_filtered.sort_values(['TYPE', 'DATE', 'Counts'])
     fig = go.Figure(go.Indicator(
         mode="number+delta",
-        value=df_filtered.at[df_filtered.index[-1], 'COUNTING'],
+        value=df_filtered.at[df_filtered.index[-1], 'Counts'],
         number={'valueformat': '.0f', 'font': {'size': 40}},
         title={"text": f"<span style='font-size:1.8em'>{crime_selected}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
         delta={'relative': True, 'valueformat': '.1%',
-               'reference': df_filtered.at[df_filtered.index[0], 'COUNTING'],
+               'reference': df_filtered.at[df_filtered.index[0], 'Counts'],
                'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
@@ -306,16 +306,16 @@ def update_graph(data, month, crime_selected):
 def update_graph(data, year, crime):
     df = pd.DataFrame(data)
     dff = df[df['TYPE'] == crime]
-    aux = dff.groupby(['YEAR']).sum()['COUNTING'].reset_index()
+    aux = dff.groupby(['YEAR']).sum()['Counts'].reset_index()
 
     fig_indicator = go.Figure()
     fig_indicator.add_trace(go.Indicator(
         mode="number+delta",
         title={"text": f"<span style='font-size:1.8em'>{crime}</span><br><span style='font-size:1em'>{year} - {year-1}</span>"},
-        value=aux[aux.YEAR.isin([year])]['COUNTING'].values[0],
+        value=aux[aux.YEAR.isin([year])]['Counts'].values[0],
         number={'valueformat': '.0f', 'font': {'size': 40}},
         delta={'relative': True, 'valueformat': '.1%',
-               'reference': aux[aux.YEAR.isin([year-1])]['COUNTING'].values[0],
+               'reference': aux[aux.YEAR.isin([year-1])]['Counts'].values[0],
                'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
@@ -339,19 +339,19 @@ def update_graph(year, crime):
     dff = aux_bar[(aux_bar.TYPE.isin([crime])) & (aux_bar.YEAR.isin([year]))]
 
     aux = dff.copy()
-    average = dff.groupby(['TYPE', 'YEAR'])['COUNTING'].mean(
-    ).reset_index().sort_values(['COUNTING'])
+    average = dff.groupby(['TYPE', 'YEAR'])['Counts'].mean(
+    ).reset_index().sort_values(['Counts'])
 
-    average_value = average.loc[0, 'COUNTING']
+    average_value = average.loc[0, 'Counts']
 
     dff.loc[:, 'NEIGHBOURHOOD'] = np.where(
-        dff.loc[:, "COUNTING"] < dff.at[dff.index[3], "COUNTING"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
+        dff.loc[:, "Counts"] < dff.at[dff.index[3], "Counts"], "Others Neighbourhoods", dff['NEIGHBOURHOOD'])
 
-    dff = dff.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['COUNTING'].sum(
-    ).reset_index().sort_values(['COUNTING'])
+    dff = dff.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD'])['Counts'].sum(
+    ).reset_index().sort_values(['Counts'])
 
-    fig_bar = px.bar(dff, x='COUNTING', y='NEIGHBOURHOOD',
-                     title=None, color='COUNTING',
+    fig_bar = px.bar(dff, x='Counts', y='NEIGHBOURHOOD',
+                     title=None, color='Counts',
                      color_continuous_scale=colorscale_res)
 
     fig_bar.add_vline(x=average_value, line_width=3,
@@ -375,8 +375,8 @@ def update_graph(year, crime):
     mask = aux.NEIGHBOURHOOD.isin(others_bairros)
 
     # Fig in modal element
-    fig_detail = px.bar(aux[mask].sort_values(['COUNTING']), x='COUNTING', y='NEIGHBOURHOOD',
-                        title=None, color='COUNTING', color_continuous_scale=colorscale_res)
+    fig_detail = px.bar(aux[mask].sort_values(['Counts']), x='Counts', y='NEIGHBOURHOOD',
+                        title=None, color='Counts', color_continuous_scale=colorscale_res)
     fig_detail.update_layout(main_config, height=350,
                              yaxis_title=None, xaxis_title=None)
     fig_detail.add_vline(x=average_value, line_width=3,
@@ -413,7 +413,7 @@ def update_graph(crimes):
     else:
 
         mask = aux_multi.TYPE.isin(crimes)
-        fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='COUNTING',
+        fig_multilinhas = px.line(aux_multi[mask], x='YEAR', y='Counts',
                                   color='TYPE',
                                   )
         # updates
@@ -444,25 +444,25 @@ def update_graph(crime, bairro1, bairro2):
     df2 = df[(df.TYPE.isin([crime])) & (df.NEIGHBOURHOOD.isin([bairro2]))]
 
     df_bairro1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))[
-        'COUNTING'].sum().reset_index()
+        'Counts'].sum().reset_index()
     df_bairro2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))[
-        'COUNTING'].sum().reset_index()
+        'Counts'].sum().reset_index()
     df_bairro1['DATA'] = pd.PeriodIndex(df_bairro1['DATA'], freq="M")
     df_bairro2['DATA'] = pd.PeriodIndex(df_bairro2['DATA'], freq="M")
     df_final = pd.DataFrame()
     df_final['DATA'] = df_bairro1['DATA'].astype('datetime64[ns]')
-    df_final['COUNTING'] = df_bairro1['COUNTING']-df_bairro2['COUNTING']
+    df_final['Counts'] = df_bairro1['Counts']-df_bairro2['Counts']
 
     del df1, df2, df_bairro1, df_bairro2
 
     fig = go.Figure()
     # The entire line
     fig.add_scattergl(
-        name=bairro1, x=df_final['DATA'], y=df_final['COUNTING'],)
+        name=bairro1, x=df_final['DATA'], y=df_final['Counts'],)
     line = dict(color='#3D5941')
     # below of zero
-    fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['COUNTING'].where(
-        df_final['COUNTING'] > 0.00000), )
+    fig.add_scattergl(name=bairro2, x=df_final['DATA'], y=df_final['Counts'].where(
+        df_final['Counts'] > 0.00000), )
     line = dict(color='#CA562C')
     # Updates
     del df_final
@@ -502,8 +502,8 @@ def update_graph(crime, bairro1, bairro2):
 def update_graph(crime, year):
     dff = df[(df.TYPE.isin([crime])) & (df.YEAR.isin([year]))]
 
-    fig_estacoes = px.bar(dff.groupby('SEASON')['PERIOD'].count().reset_index().rename(columns={'PERIOD': 'COUNTING'}),
-                          x='SEASON', y='COUNTING', color='COUNTING', color_continuous_scale=colorscale_res)
+    fig_estacoes = px.bar(dff.groupby('SEASON')['PERIOD'].count().reset_index().rename(columns={'PERIOD': 'Counts'}),
+                          x='SEASON', y='Counts', color='Counts', color_continuous_scale=colorscale_res)
     fig_estacoes.update_layout(
         main_config, height=170, xaxis_title=None, yaxis_title=None, template=template)
     return fig_estacoes
@@ -519,7 +519,7 @@ def update_graph(crime, year):
 def update_graph(crime):
     aux = df_crimes[df_crimes.TYPE.isin([crime])]
     fig_periodo = px.pie(aux,
-                         names='PERIOD', values='COUNTING', color='COUNTING', template=template)
+                         names='PERIOD', values='Counts', color='Counts', template=template)
     fig_periodo.update_layout(main_config, height=170)
 
     return fig_periodo
