@@ -6,6 +6,8 @@ import plotly.express as px
 import pandas as pd
 from graphs import *
 from app import *
+import warnings
+warnings.filterwarnings("ignore")
 
 
 df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
@@ -88,7 +90,7 @@ layout = dbc.Container(children=[
                                                 "Percentage of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season",
                                                       className='scroll',
-                                                      figure=fig_bar_season_abs)
+                                                      figure=fig_bar_season)
                                         ])
                                     ])
                                 ])
@@ -102,10 +104,10 @@ layout = dbc.Container(children=[
                                     dbc.Row([
                                         dbc.Col([
                                             html.H6(
-                                                "Percentage of Crimes in Each Season"),
+                                                "Counts of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season-abs",
                                                       className='scroll',
-                                                      figure=fig_bar_season)
+                                                      figure=fig_bar_season_abs)
                                         ])
                                     ])
                                 ])
@@ -119,7 +121,7 @@ layout = dbc.Container(children=[
                             dbc.CardBody([
                                 dbc.Row([
                                     dbc.Col([
-                                        html.H6("Crimes georeferenced"),
+                                        html.H6("Crimes Georeferenced"),
                                         dcc.Graph(id='map')
                                     ])
                                 ], className='g-2 my-auto', style={'margin-top': '9px'})
@@ -161,23 +163,6 @@ def set_season_options(data, year, crime):
     return [{'label': i, 'value': i} for i in seasons]
 
 
-# @cache.memoize(timeout=TIMEOUT)  # in seconds
-# @app.callback(
-#     Output('drop-month', 'options'),
-#     [Input('dataset_map', 'data'),
-#      Input('drop-year', 'value'),
-#      Input('drop-crime', 'value'),
-#      Input('drop-season', 'value')],
-#     prevent_initial_call=True
-
-# )
-# def set_month_options(data, year, crime, season):
-#     df = pd.DataFrame(data)
-#     months = sorted(df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
-#         df.SEASON.isin([season]))]['MONTH'].unique())
-#     return [{'label': i, 'value': i} for i in months]
-
-
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output('map', 'figure'),
@@ -190,26 +175,8 @@ def set_season_options(data, year, crime):
 def update_map(data, year, crime, season):
     df = pd.DataFrame(data)
 
-    # aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
-    #     df.SEASON.isin([season])) & (df.MONTH.isin([month]))]
     aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
         df.SEASON.isin([season]))]
-
-    # discrete_colors = ["blue", "green", "red", "purple", "orange"]
-    # colors_dict = {}
-    # num_months = aux.MONTH.nunique()
-    # months = aux.MONTH.unique()
-    # count = 0
-    # print(f"{num_months} e {months}")
-    # # while count <= num_months:
-    # #     colors_dict[months[count]] = discrete_colors[count]
-    # #     count += 1
-
-    print(f"{season} - {aux.MONTH.unique()}")
-    print(aux.MONTH.unique())
-    colors = {1: '#535454', 2: '#A7A8A8', 3: "#FCFFFF", 4: '#402404',
-              5: '#804809', 6: "#113140", 7: '#3493BF', 8: '#45C4FF',
-              9: "#311440", 10: '#632980', 11: '#943DBF', 12: '#C552FF'}
 
     markers = {1: 'circle',
                2: 'square',
@@ -224,21 +191,22 @@ def update_map(data, year, crime, season):
                11: 'diamond',
                12: 'cross',
                }
-    # aux.loc[:, 'markers'] = None
+    aux['markers'] = 'circle'
     aux.loc[:, 'markers'] = aux.MONTH.map(markers)
     # print(colors)
 
     fig_map = px.scatter_mapbox(
         aux, lat="Lat", lon="Long", hover_name="TYPE",
         zoom=11, height=710,
+        color='MONTH'
     )
+
     fig_map.update_layout(mapbox_style='carto-darkmatter')
-    fig_map.update_traces(marker=dict(
-        symbol=aux['markers'],
-        size=11
-    ),
-    )
-    # color=aux['MONTH'].map(colors).astype(str),
+    # fig_map.update_traces(
+    #     marker_symbol="square",
+    #     selected_marker_size=,
+    #     selector=dict(type='scatter'),
+    # )
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig_map
 
@@ -264,11 +232,9 @@ def update_graph(year, crime, valor):
         for start_letter in all:
             lista += [x for x in Others if x.startswith(start_letter.upper())]
 
-        lista = sorted(lista)
-
         mask = aux.NEIGHBOURHOOD.isin(lista)
 
-        fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
+        fig_bar_season = px.histogram(aux[mask].sort_values(['SEASON', 'NEIGHBOURHOOD']),
                                       x="NEIGHBOURHOOD",
                                       color="SEASON",
                                       barnorm="percent",
@@ -287,7 +253,7 @@ def update_graph(year, crime, valor):
     else:
         mask = aux.NEIGHBOURHOOD.isin(initial)
 
-        fig_bar_season = px.histogram(aux[mask].sort_values(['NEIGHBOURHOOD', 'SEASON']),
+        fig_bar_season = px.histogram(aux[mask].sort_values(['SEASON', 'NEIGHBOURHOOD']),
                                       x="NEIGHBOURHOOD",
                                       color="SEASON",
                                       barnorm="percent",
@@ -298,7 +264,7 @@ def update_graph(year, crime, valor):
         )
         fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None,
                                      )
-        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        # fig_bar_season.update_xaxes(categoryorder='total descending',)
         fig_bar_season.update_traces(
             textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
@@ -327,11 +293,9 @@ def update_graph(year, crime, valor):
         for start_letter in all:
             lista += [x for x in Others if x.startswith(start_letter.upper())]
 
-        lista = sorted(lista)
-
         mask = aux.NEIGHBOURHOOD.isin(lista)
 
-        fig_bar_season_abs = px.bar(aux[mask].groupby(['NEIGHBOURHOOD', 'SEASON'])['Lat'].size(
+        fig_bar_season_abs = px.bar(aux[mask].groupby(['SEASON', 'NEIGHBOURHOOD'])['Lat'].size(
         ).reset_index().rename(columns={"Lat": "Counts"}),
             x='NEIGHBOURHOOD', y='Counts', color='SEASON',
             color_discrete_sequence=[
@@ -340,7 +304,7 @@ def update_graph(year, crime, valor):
 
         fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
                                          )
-        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season_abs.update_xaxes(categoryorder='total descending')
         fig_bar_season_abs.update_traces(
             textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
@@ -348,7 +312,7 @@ def update_graph(year, crime, valor):
     else:
         mask = aux.NEIGHBOURHOOD.isin(initial)
 
-        fig_bar_season_abs = px.bar(aux[mask].groupby(['NEIGHBOURHOOD', 'SEASON'])['Lat'].size(
+        fig_bar_season_abs = px.bar(aux[mask].groupby(['SEASON', 'NEIGHBOURHOOD'])['Lat'].size(
         ).reset_index().rename(columns={"Lat": "Counts"}),
             x='NEIGHBOURHOOD', y='Counts', color='SEASON',
             color_discrete_sequence=[
@@ -357,7 +321,7 @@ def update_graph(year, crime, valor):
 
         fig_bar_season_abs.update_layout(main_config, height=320, yaxis_title="Counts", xaxis_title=None,
                                          )
-        # fig_bar_season.update_xaxes(categoryorder='total descending')
+        fig_bar_season_abs.update_xaxes(categoryorder='total descending')
         fig_bar_season_abs.update_traces(
             textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 

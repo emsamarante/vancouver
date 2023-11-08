@@ -149,7 +149,7 @@ fig_bar_season = px.histogram(df_map[mask].sort_values(['NEIGHBOURHOOD', "SEASON
                               )
 fig_bar_season.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None
                              )
-fig_bar_season.update_xaxes(categoryorder='total descending')
+# fig_bar_season.update_xaxes(categoryorder='total descending')
 fig_bar_season.update_traces(
     textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')
 
@@ -163,16 +163,15 @@ initial = ['Arbutus Ridge', 'Central Business District',
 
 mask = df_map.NEIGHBOURHOOD.isin(initial)
 
-fig_bar_season_abs = px.histogram(df_map[mask].sort_values(['NEIGHBOURHOOD', "SEASON"]),
-                                  x="NEIGHBOURHOOD",
-                                  color="SEASON",
-                                  barnorm="percent",
-                                  text_auto=True,
-                                  color_discrete_sequence=[
-                                  "#80B912", "#333333", "#626262", "#A0A2A1"],
-                                  )
+fig_bar_season_abs = px.bar(df_map[mask].groupby(['SEASON', 'NEIGHBOURHOOD'])['Lat'].size(
+).reset_index().rename(columns={"Lat": "Counts"}),
+    x='NEIGHBOURHOOD', y='Counts', color='SEASON',
+    color_discrete_sequence=[
+    "#80B912", "#333333", "#626262", "#A0A2A1"],
+)
+
 fig_bar_season_abs.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None
                                  )
-fig_bar_season_abs.update_xaxes(categoryorder='total descending')
+# fig_bar_season_abs.update_xaxes(categoryorder='total descending')
 fig_bar_season_abs.update_traces(
     textfont_size=12, textangle=0, cliponaxis=True, texttemplate='%{y:.0f}')

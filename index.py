@@ -28,7 +28,7 @@ navbar = dbc.NavbarSimple(
             label="More",
         ),
     ],
-    brand="Criminal events analysis",
+    brand="Criminal Events Analysis",
     brand_href="#",
     color="danger",
     dark=True,
