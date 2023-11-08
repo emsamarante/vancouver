@@ -1,17 +1,9 @@
-# import dash
 from dash import dcc, html
 from dash.dependencies import Output, Input
 import dash_bootstrap_components as dbc
-# from Projetos.vancouver.pages import maps
-# import dash_bootstrap_templates
-# import pandas as pd
-# import layouts
 from app import *
-# from dash_bootstrap_templates import ThemeSwitchAIO
 from pages import analysis,  home, maps
 
-
-# dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@1.0.4/dbc.min.css"
 
 navbar = dbc.NavbarSimple(
     children=[
@@ -42,8 +34,6 @@ app.layout = dbc.Container(children=[
         ], sm=4, lg=12),], style={"margin-top": "7px"}, className='g2 my-auto'),
     dbc.Row([
         dbc.Col([
-            # dcc.Loading(id="id-load-trigger",
-            #             children=[html.Div(id="page-content")], type="default"),
             html.Div(id="page-content")
         ], sm=8, lg=12,)
     ], style={"margin-top": "7px"}, className='g2 my-auto')
@@ -62,9 +52,7 @@ def render_page_content(pathname):
         return maps.layout
 
     elif pathname == "/analysis":
-        tela = analysis.layout
-        # time.sleep(2.5)
-        return tela
+        return analysis.layout
 
 
 if __name__ == '__main__':
