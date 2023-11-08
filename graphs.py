@@ -45,7 +45,7 @@ template = 'cyborg'
 #############################################################################
 
 
-# ================================ data
+# data ===
 df0 = pd.read_csv("data/dataset_agg.csv", index_col=0)
 
 
@@ -54,7 +54,7 @@ df_store = df0.to_dict()
 df = pd.DataFrame(df_store)
 
 
-# Criando gráfico de barra ===========================================
+# Crime by Neighbourhood and Type ===
 aux_bar = df.groupby(['TYPE', 'YEAR', 'NEIGHBOURHOOD']).sum()[
     'Counts'].reset_index()
 
@@ -67,7 +67,7 @@ fig_bar = px.bar(aux_bar, x='Counts', y='NEIGHBOURHOOD',
 fig_bar.update_layout(main_config, height=170,
                       yaxis_title=None, template=template)
 
-# Gráfico multilinhas =================================================
+# Crimes Over Year ===
 df = pd.DataFrame(df_store)
 aux_multi = df.groupby(['TYPE', 'YEAR'])['PERIOD'].count(
 ).reset_index().rename(columns={'PERIOD': 'Counts'})
@@ -78,7 +78,7 @@ fig_multilinhas.update_layout(
     main_config, height=230, xaxis_title=None, template=template)
 
 
-# Criando gráfico estacoes ==========================================
+# CAnalysis by Season ===
 df = pd.DataFrame(df_store)
 fig_estacoes = px.bar(df.groupby('SEASON')['Counts'].sum().reset_index(),
                       x='SEASON', y='Counts')
@@ -86,7 +86,7 @@ fig_estacoes = px.bar(df.groupby('SEASON')['Counts'].sum().reset_index(),
 fig_estacoes.update_layout(main_config, height=200,
                            xaxis_title=None, template=template)
 
-# Criando gráfico período ===========================================
+# Analysis by Period of Day ===
 df = pd.DataFrame(df_store)
 df_crimes = df.groupby(['PERIOD', 'TYPE'])['Counts'].sum(
 ).reset_index()
