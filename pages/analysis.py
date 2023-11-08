@@ -1,18 +1,12 @@
-from dash import html, dcc, Patch
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input, State
-# from dash_bootstrap_templates import ThemeSwitchAIO
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
 from graphs import *
 from dash_bootstrap_templates import load_figure_template
-
-# from graphs import aux_bar
-
-import time
-
 from app import *
 
 
@@ -31,38 +25,6 @@ texto_project_2 = """In this project I analyse data of crimes in Vancouver and s
 by four screens: """
 
 load_figure_template("cyborg")
-
-# # ================================ data
-# df = pd.read_csv("data/dataset.csv", index_col=0)
-# datetime_series = pd.to_datetime(
-#     df[['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE']])
-# df['DATA'] = datetime_series
-# df.dropna(subset=['NEIGHBOURHOOD'], inplace=True)
-
-
-# def estacao_do_ano(data):
-#     import datetime
-#     month = data.month
-#     day = data.day
-#     year = data.year
-
-#     if (datetime.date(year, month, day) >= datetime.date(year, 3, 20)) and (datetime.date(year, month, day) < datetime.date(year, 6, 21)):
-#         return 'Spring'
-#     elif (datetime.date(year, month, day) >= datetime.date(year, 6, 21)) and (datetime.date(year, month, day) < datetime.date(year, 9, 23)):
-#         return 'Summer'
-#     elif (datetime.date(year, month, day) >= datetime.date(year, 9, 23)) and (datetime.date(year, month, day) < datetime.date(year, 12, 21)):
-#         return 'Autumn'
-#     else:
-#         return 'Winter'
-
-
-# # Aplicar a função para criar uma nova coluna 'estacao'
-# df['SEASON'] = df['DATA'].apply(estacao_do_ano)
-
-
-# # To dict - para salvar no dcc.store
-# df_store = df.to_dict()
-# figure = None
 
 
 def CARD(title, id, sm=6, lg=4, md=4, config=config_graph, style=tab_card):
@@ -88,8 +50,6 @@ def make_tooltip(text, target):
 layout = dbc.Container(children=[
     # Armazenamento de dataset
     dcc.Store(id='dataset', data=df_store),
-    # dcc.Store(id='dataset-fixed', data=df_store),
-    dcc.Store(id='controller', data={'play': False}),
     dbc.Row([
         dbc.Col([
             dbc.Row([
@@ -137,13 +97,13 @@ layout = dbc.Container(children=[
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
                 dbc.Col([
-                    CARD("Amount of crimes by month and type",
+                    CARD("Amount of Crimes by Month and Type",
                          "id-card-indicator-2", lg=12),
                     make_tooltip(
                         "Comparison with previous year by type of crime", "id-card-indicator-2")
                 ], lg=3),
                 dbc.Col([
-                    CARD("Amount of crimes by year and type",
+                    CARD("Amount of Crimes by Year and Type",
                          "id-card-indicator-1", lg=12),
                     make_tooltip("Comparison with previous year",
                                  "id-card-indicator-1")
@@ -154,7 +114,7 @@ layout = dbc.Container(children=[
                             dbc.Row([
                                 dbc.Col([
                                     html.Div([
-                                        html.H6("Crime by neighbourhood and type", style={
+                                        html.H6("Crime by Neighbourhood and Type", style={
                                                 "display": "inline-block"}),
                                         dbc.Button("More Info", id="open", n_clicks=0, className="btn btn-secondary btn-sm",
                                                    style={"display": "inline-block", "margin-left": "5%"}),
@@ -212,7 +172,6 @@ layout = dbc.Container(children=[
                                     ])
                                 ])
                             ], style=tab_card),
-                            # CARD("Crimes Over Year", "id-graph-line-1", lg=12),
                             make_tooltip(
                                 "Seeing the crimes over year", "id-graph-line-1")
                         ]),
@@ -248,8 +207,6 @@ layout = dbc.Container(children=[
                                     ])
                                 ])
                             ], style={'height': '85%'}),
-                            # CARD("Direct Comparisson",
-                            #      "id-graph-comparison", lg=12),
                             html.P(id='desc_comparison', style={
                                    'color': 'gray', 'font-size': '80%'}),
                         ], lg=12)
@@ -263,25 +220,22 @@ layout = dbc.Container(children=[
                             dbc.CardBody([
                                 dbc.Row([
                                     dbc.Col([
-                                        html.H6("Analysis by season"),
+                                        html.H6("Analysis by Season"),
                                         dcc.Graph(id="id-estacao-graph", config=config_graph, figure=fig_estacoes)], lg=12),
                                 ])
                             ])
                         ], style=tab_card),
-                        # CARD("Análise por estações", "id-estacao-graph", lg=12),
                     ], lg=6),
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
                             dbc.Row([
                                     dbc.Col([
-                                        html.H6("Analysis by period of day"),
+                                        html.H6("Analysis by Period of Day"),
                                         dcc.Graph(id="id-periodo", config=config_graph, figure=fig_periodo)], lg=12),
                                     ])
                         ])
                     ], style=tab_card),
-
-                    # CARD("Análise por período", "id-periodo", lg=12)
                 ], lg=6)
             ], className='g-2 my-auto')
 
