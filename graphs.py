@@ -1,11 +1,10 @@
 import plotly.express as px
-import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 load_figure_template("cyborg")
 
 
-# Utils
+# Utils ===
 
 config_graph = {"displayModeBar": False, "showTips": False}
 tab_card = {'height': '100%'}
@@ -34,9 +33,7 @@ colorscale_res = [
     (1, red),    # Cor para valores máximos
 ]
 
-
 template = 'cyborg'
-
 
 #############################################################################
 #
