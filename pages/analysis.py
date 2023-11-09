@@ -100,7 +100,7 @@ layout = dbc.Container(children=[
                     CARD("Amount of Crimes by Month and Type",
                          "id-card-indicator-2", lg=12),
                     make_tooltip(
-                        "Comparison with previous year by type of crime", "id-card-indicator-2")
+                        "Comparison with previous month by type of crime", "id-card-indicator-2")
                 ], lg=3),
                 dbc.Col([
                     CARD("Amount of Crimes by Year and Type",
@@ -143,7 +143,8 @@ layout = dbc.Container(children=[
                     ], style=tab_card),
                     dbc.Tooltip(
                         """Distribution of crimes by neighbourhood in a year. The category 'Others 
-                        Neighbourhoods means all other neighbourhoods were grouped'""",
+                        Neighbourhoods' means that all other neighbourhoods were grouped. Click on button to see the detailing
+                        of the 'other neighbourhoods'.""",
                         target="id-graph-1",
                         is_open=False,
                         placement='top'
@@ -173,7 +174,7 @@ layout = dbc.Container(children=[
                                 ])
                             ], style=tab_card),
                             make_tooltip(
-                                "Seeing the crimes over year", "id-graph-line-1")
+                                "Seeing the crimes progression over the year.", "id-graph-line-1")
                         ]),
                     ], className='g-2 my-auto'),
                 ], lg=6),
@@ -207,6 +208,9 @@ layout = dbc.Container(children=[
                                     ])
                                 ])
                             ], style={'height': '81%'}),
+                            make_tooltip(
+                                "Safety direct comparisson between two neighbourhoods.", "id-graph-comparison"),
+
                             html.P(id='desc_comparison', style={
                                    'color': 'gray', 'font-size': '80%'}),
                         ], lg=12)
@@ -225,6 +229,12 @@ layout = dbc.Container(children=[
                                 ])
                             ])
                         ], style=tab_card),
+                        dbc.Tooltip(
+                            """Distribution of crimes by season of to each year and each crime.""",
+                            target="id-estacao-graph",
+                            is_open=False,
+                            placement='top'
+                        ),
                     ], lg=6),
                 dbc.Col([
                     dbc.Card([
@@ -236,6 +246,12 @@ layout = dbc.Container(children=[
                                     ])
                         ])
                     ], style=tab_card),
+                    dbc.Tooltip(
+                        """Distribution of crimes by period of to each year and each crime.""",
+                        target="id-periodo",
+                        is_open=False,
+                        placement='top'
+                    ),
                 ], lg=6)
             ], className='g-2 my-auto', style={'margin-bottom': '2%'})
 
