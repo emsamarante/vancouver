@@ -15,14 +15,6 @@ df_store_map = df_map0.to_dict()
 df_map = pd.DataFrame(df_store_map)
 
 years = df_map.YEAR.unique()
-# crimes = sorted(df_map.TYPE.unique())
-# seasons = sorted(df_map.SEASON.unique())
-# months = sorted(df_map.MONTH.unique())
-
-
-# all_options = {'years': years, 'crimes': crimes,
-#                'seasons': seasons, 'months': months}
-
 
 layout = dbc.Container(children=[
     # Armazenamento de dataset
@@ -142,7 +134,7 @@ layout = dbc.Container(children=[
 ], fluid=True)
 
 
-@cache.memoize(timeout=TIMEOUT)  # in seconds
+@cache.memoize(timeout=TIMEOUT)
 @app.callback(
     Output('drop-crime', 'options'),
     [Input('dataset_map', 'data'),
@@ -154,7 +146,7 @@ def set_crimes_options(data, year):
     return [{'label': i, 'value': i} for i in crimes]
 
 
-@cache.memoize(timeout=TIMEOUT)  # in seconds
+@cache.memoize(timeout=TIMEOUT)
 @app.callback(
     Output('drop-season', 'options'),
     [Input('dataset_map', 'data'),
@@ -168,8 +160,10 @@ def set_season_options(data, year, crime):
         df.TYPE.isin([crime]))]['SEASON'].unique())
     return [{'label': i, 'value': i} for i in seasons]
 
+# Crimes Georeferenced ===
 
-@cache.memoize(timeout=TIMEOUT)  # in seconds
+
+@cache.memoize(timeout=TIMEOUT)
 @app.callback(
     Output('map', 'figure'),
     [Input('dataset_map', 'data'),
@@ -183,21 +177,21 @@ def update_map(data, year, crime, season):
     aux = df[(df.YEAR.isin([year])) & (df.TYPE.isin([crime])) & (
         df.SEASON.isin([season]))]
 
-    markers = {1: 'circle',
-               2: 'square',
-               3: 'diamond',
-               4: 'cross',
-               5: 'circle',
-               6: 'square',
-               7: 'diamond',
-               8: 'cross',
-               9: 'circle',
-               10: 'square',
-               11: 'diamond',
-               12: 'cross',
-               }
-    aux['markers'] = 'circle'
-    aux.loc[:, 'markers'] = aux.MONTH.map(markers)
+    # markers = {1: 'circle',
+    #            2: 'square',
+    #            3: 'diamond',
+    #            4: 'cross',
+    #            5: 'circle',
+    #            6: 'square',
+    #            7: 'diamond',
+    #            8: 'cross',
+    #            9: 'circle',
+    #            10: 'square',
+    #            11: 'diamond',
+    #            12: 'cross',
+    #            }
+    # aux['markers'] = 'circle'
+    # aux.loc[:, 'markers'] = aux.MONTH.map(markers)
 
     fig_map = px.scatter_mapbox(
         aux, lat="Lat", lon="Long", hover_name="TYPE",
@@ -213,6 +207,8 @@ def update_map(data, year, crime, season):
     # )
     fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig_map
+
+# Percentage of Crimes in Each Season ===
 
 
 @cache.memoize(timeout=TIMEOUT)
@@ -275,8 +271,8 @@ def update_graph(year, crime, valor):
         return fig_bar_season
 
 
-# px Bar absolute
-@cache.memoize(timeout=TIMEOUT)  # in seconds
+# Counts of Crimes in Each Season
+@cache.memoize(timeout=TIMEOUT)
 @app.callback(
     Output('crimes-season-abs', 'figure'),
     [Input('drop-year', 'value'),
