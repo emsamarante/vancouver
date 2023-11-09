@@ -3,8 +3,9 @@ from dash.dependencies import Output, Input
 import dash_bootstrap_components as dbc
 from app import *
 from pages import analysis,  home, maps
+import datetime
 
-
+date = datetime.datetime.today().date()
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Home", href="/")),
@@ -19,6 +20,24 @@ navbar = dbc.NavbarSimple(
             in_navbar=True,
             label="More",
         ),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem(
+                    "LinkedIn", href="https://www.linkedin.com/in/eduardo-amarante/"),
+                dbc.DropdownMenuItem(
+                    "Portfolio", href="https://emsamarante.github.io/"),
+                dbc.DropdownMenuItem(
+                    "Instagram", href="https://www.instagram.com/dataclarityllc/"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="Contact",
+        ),
+        # dbc.NavItem(dbc.NavLink(
+        #     "Contact me",
+        #     href="https://www.linkedin.com/in/eduardo-amarante/",
+        #     target="_blank")),
+        dbc.NavItem(dbc.NavLink(f"V1.0 - {date}")),
     ],
     brand="Criminal Events Analysis",
     brand_href="#",
