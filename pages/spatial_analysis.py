@@ -35,12 +35,13 @@ layout = dbc.Container(children=[
                     html.Div(([
                         html.Div(["Choose the neighbourhoods"],
                                  style={"font-size": "80%"}),
-                        dcc.Input(
-                            id='input', type='text',
-                            placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
-                            debounce=False,
-                            className="form-control"),
-
+                        html.Div([
+                            dcc.Input(
+                                id='input', type='text',
+                                placeholder="Type the initial letter of the neighbourhood names separated by hyphen.",
+                                debounce=False,
+                                className="form-control"),
+                        ], className="input-group"),
                     ])),
                 ], lg=4),
                 dbc.Col([
