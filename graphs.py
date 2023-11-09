@@ -165,7 +165,7 @@ fig_bar_season_abs = px.bar(df_map[mask].groupby(['SEASON', 'NEIGHBOURHOOD'])['L
     "#80B912", "#333333", "#626262", "#A0A2A1"],
 )
 
-fig_bar_season_abs.update_layout(main_config, height=330, yaxis_title="Percent", xaxis_title=None
+fig_bar_season_abs.update_layout(main_config, height=330, yaxis_title="Counts", xaxis_title=None
                                  )
 # fig_bar_season_abs.update_xaxes(categoryorder='total descending')
 fig_bar_season_abs.update_traces(
