@@ -8,7 +8,7 @@ FONT_AWESOME = ["https://use.fontawesome.com/releases/v5.15.4/css/all.css"]
 
 load_figure_template("cyborg")
 app = dash.Dash(__name__, external_stylesheets=[
-                FONT_AWESOME, dbc.themes.CYBORG])
+                FONT_AWESOME, dbc.themes.CYBORG], update_title='Processing...')
 
 app.title = "Vancouver Criminal Data Analysis"
 

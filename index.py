@@ -35,11 +35,7 @@ navbar = dbc.NavbarSimple(
             in_navbar=True,
             label="Contact",
         ),
-        # dbc.NavItem(dbc.NavLink(
-        #     "Contact me",
-        #     href="https://www.linkedin.com/in/eduardo-amarante/",
-        #     target="_blank")),
-        dbc.NavItem(dbc.NavLink(f"V1.0 - {date}")),
+        dbc.NavItem(dbc.NavLink(f"V1.0 - ({date})")),
     ],
     brand="Criminal Events Analysis",
     brand_href="#",
