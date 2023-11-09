@@ -10,6 +10,8 @@ load_figure_template("cyborg")
 app = dash.Dash(__name__, external_stylesheets=[
                 FONT_AWESOME, dbc.themes.CYBORG])
 
+app.title = "Vancouver Criminal Data Analysis"
+
 cache = Cache(app.server, config={
     # try 'filesystem' if you don't want to setup redis
     'CACHE_TYPE': 'filesystem',
