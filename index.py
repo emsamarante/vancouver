@@ -2,7 +2,7 @@ from dash import dcc, html
 from dash.dependencies import Output, Input
 import dash_bootstrap_components as dbc
 from app import *
-from pages import analysis,  home, maps
+from pages import overview_analysis,  home, maps
 import datetime
 
 date = datetime.datetime.today().date()
@@ -13,7 +13,7 @@ navbar = dbc.NavbarSimple(
             children=[
                 dbc.DropdownMenuItem("More pages", header=True),
                 dbc.DropdownMenuItem(
-                    "Analysis", href="/analysis", id='id-load-trigger'),
+                    "Overview Analysis", href="/overview-analysis", id='id-load-trigger'),
                 dbc.DropdownMenuItem("Maps", href="/maps"),
             ],
             nav=True,
@@ -68,8 +68,8 @@ def render_page_content(pathname):
     elif pathname == "/maps":
         return maps.layout
 
-    elif pathname == "/analysis":
-        return analysis.layout
+    elif pathname == "/overview-analysis":
+        return overview_analysis.layout
 
 
 if __name__ == '__main__':
