@@ -27,6 +27,8 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem(
                     "Portfolio", href="https://emsamarante.github.io/"),
                 dbc.DropdownMenuItem(
+                    "GitHub", href="https://github.com/emsamarante"),
+                dbc.DropdownMenuItem(
                     "Instagram", href="https://www.instagram.com/dataclarityllc/"),
             ],
             nav=True,
