@@ -78,7 +78,6 @@ layout = dbc.Container(children=[
                             clearable=False
                         ),
                     ])
-
                 ], lg=3),
                 dbc.Col([
                     html.Div([
@@ -92,7 +91,6 @@ layout = dbc.Container(children=[
                             clearable=False
                         )
                     ])
-
                 ], lg=6),
             ], className='g-2 my-auto', style={'margin-top': '9px'}),
             dbc.Row([
@@ -195,7 +193,7 @@ layout = dbc.Container(children=[
                                          for i in sorted(df.NEIGHBOURHOOD.unique())],
                             )
                         ], lg=6)
-                    ], className='g-2 my-auto'),
+                    ]),
                     dbc.Row([
                         dbc.Col([
                             dbc.Card([
@@ -206,11 +204,11 @@ layout = dbc.Container(children=[
                                             dcc.Graph(id="id-graph-comparison", config=config_graph)], lg=12),
                                     ])
                                 ])
-                            ], style={'height': '85%'}),
+                            ], style={'height': '82%'}),
                             html.P(id='desc_comparison', style={
                                    'color': 'gray', 'font-size': '80%'}),
                         ], lg=12)
-                    ], className='g-2 my-auto',)
+                    ])
                 ], lg=6)
             ], className='g-2 my-auto'),
             dbc.Row([
@@ -237,7 +235,7 @@ layout = dbc.Container(children=[
                         ])
                     ], style=tab_card),
                 ], lg=6)
-            ], className='g-2 my-auto')
+            ], className='g-2 my-auto', style={'margin-bottom': '2%'})
 
         ], className='g-2 my-auto'),])
 
@@ -290,7 +288,7 @@ def update_graph(data, month, crime_selected):
                'increasing': {'color': red}, 'decreasing': {'color': green}},
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
-    fig.update_layout(main_config, height=150, template=template)
+    fig.update_layout(main_config, height=140, template=template)
     del df_filtered
     return fig
 
@@ -320,7 +318,7 @@ def update_graph(data, year, crime):
         domain={'x': [0, 1], 'y': [0.05, 0.8]}
     ))
     del aux, dff, df
-    fig_indicator.update_layout(main_config, height=150, template=template)
+    fig_indicator.update_layout(main_config, height=140, template=template)
     return fig_indicator
 
 # Crime by neighbourhood and type ===
@@ -356,7 +354,7 @@ def update_graph(year, crime):
 
     fig_bar.add_vline(x=average_value, line_width=3,
                       line_dash="dash", line_color="white", label=dict(text=None))
-    fig_bar.update_layout(main_config, height=150,
+    fig_bar.update_layout(main_config, height=140,
                           yaxis_title=None, xaxis_title=None, template=template)
     fig_bar.add_annotation(text=f"Average: {round(average_value,1)}",
                            xref="paper", yref="paper",
@@ -418,7 +416,7 @@ def update_graph(crimes):
                                   )
         # updates
         fig_multilinhas.update_layout(
-            main_config, height=220, xaxis_title=None, yaxis_title=None)
+            main_config, height=215, xaxis_title=None, yaxis_title=None)
 
         del mask
         return fig_multilinhas
@@ -466,7 +464,7 @@ def update_graph(crime, bairro1, bairro2):
     line = dict(color='#CA562C')
     # Updates
     del df_final
-    fig.update_layout(main_config, height=180)
+    fig.update_layout(main_config, height=187)
 
     # Annotations to show which is safer
     fig.add_annotation(text=f'{bairro1} had more crimes',
