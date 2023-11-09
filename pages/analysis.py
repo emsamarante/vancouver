@@ -193,7 +193,7 @@ layout = dbc.Container(children=[
                                          for i in sorted(df.NEIGHBOURHOOD.unique())],
                             )
                         ], lg=6)
-                    ]),
+                    ], className='g-2 my-auto'),
                     dbc.Row([
                         dbc.Col([
                             dbc.Card([
@@ -204,11 +204,11 @@ layout = dbc.Container(children=[
                                             dcc.Graph(id="id-graph-comparison", config=config_graph)], lg=12),
                                     ])
                                 ])
-                            ], style={'height': '82%'}),
+                            ], style={'height': '81%'}),
                             html.P(id='desc_comparison', style={
                                    'color': 'gray', 'font-size': '80%'}),
                         ], lg=12)
-                    ])
+                    ], className='g-2 my-auto',)
                 ], lg=6)
             ], className='g-2 my-auto'),
             dbc.Row([
@@ -464,7 +464,7 @@ def update_graph(crime, bairro1, bairro2):
     line = dict(color='#CA562C')
     # Updates
     del df_final
-    fig.update_layout(main_config, height=187)
+    fig.update_layout(main_config, height=175)
 
     # Annotations to show which is safer
     fig.add_annotation(text=f'{bairro1} had more crimes',
