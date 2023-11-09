@@ -94,7 +94,9 @@ layout = dbc.Container(children=[
                                         ])
                                     ])
                                 ])
-                            ], style=tab_card)
+                            ], style=tab_card),
+                            make_tooltip("Relative percentage of crime types by season for each year.",
+                                         "crimes-season")
                         ])
                     ], className='g-2 my-auto', style={'margin-top': '9px'}),
                     dbc.Row([
@@ -111,7 +113,9 @@ layout = dbc.Container(children=[
                                         ])
                                     ])
                                 ])
-                            ], style=tab_card)
+                            ], style=tab_card),
+                            make_tooltip("Total crimes by season for each year.",
+                                         "crimes-season-abs")
                         ])
                     ], className='g-2 my-auto', style={'margin-top': '9px'}),
                 ], lg=4),
@@ -170,7 +174,6 @@ def set_season_options(data, year, crime):
      Input('drop-year', 'value'),
      Input('drop-crime', 'value'),
      Input('drop-season', 'value'),]
-    #  Input('drop-month', 'value'),],
 )
 def update_map(data, year, crime, season):
     df = pd.DataFrame(data)
@@ -193,7 +196,6 @@ def update_map(data, year, crime, season):
                }
     aux['markers'] = 'circle'
     aux.loc[:, 'markers'] = aux.MONTH.map(markers)
-    # print(colors)
 
     fig_map = px.scatter_mapbox(
         aux, lat="Lat", lon="Long", hover_name="TYPE",
@@ -211,7 +213,7 @@ def update_map(data, year, crime, season):
     return fig_map
 
 
-@cache.memoize(timeout=TIMEOUT)  # in seconds
+@cache.memoize(timeout=TIMEOUT)
 @app.callback(
     Output('crimes-season', 'figure'),
     [Input('drop-year', 'value'),
