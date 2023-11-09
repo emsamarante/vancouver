@@ -2,19 +2,33 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 
-texto = """ Vancouver is one of the most ethnically and linguistically diverse cities in Canada: 49.3 percent of its residents are
- not native English speakers, 47.8 percent are native speakers of neither English nor French, and 54.5 percent of residents belong 
- to visible minority groups. It has been consistently ranked one of the most livable cities in Canada and in the world.
- In terms of housing affordability, Vancouver is also one of the most expensive cities in Canada and in the world.
- Vancouver plans to become the greenest city in the world. Vancouverism is the city's urban planning design philosophy. """
+texto = """Vancouver is recognized as one of the most ethnically and 
+linguistically diverse cities in Canada, with 49.3 percent of its 
+residents not being native English speakers. Additionally, 47.8 percent
+ are native speakers of neither English nor French, and 54.5 percent belong
+   to visible minority groups. The city has consistently earned a reputation
+     as one of the most livable cities in Canada and globally. """
 
 
-texto_project_1 = """ Not all areas of Vancouver are as safe as others. Vancouver has been been voted one of the best cities in the 
-world to live in, but crime statistics clearly indicate that there are some areas where you want to have your wits about you. These areas are often 
-referred to as "hot spots" of crime. """
+texto_project_1 = """
+Not all areas of Vancouver are as safe as others. While Vancouver
+ has been voted one of the best cities in the world 
+ to live in, crime statistics clearly indicate that there are some
+   areas where you need to be careful. These areas are often
+     referred to as 'hot spots' of crime.
+"""
 
-texto_project_2 = """In this project I analyse data of crimes in Vancouver and show the results in the attractive way. This dashboard is compound
-by four screens: """
+texto_project_1_1 = """
+The project aims to inform the citizens of Vancouver about security
+ issues and share insights with the Chief of Police on the subject.
+"""
+
+texto_project_2 = """In this project, I analyze crime data in Vancouver
+ and present the results in an attractive perspective. This dashboard
+   is comprised of three screens:"""
+
+texto_project_3 = """In the upcoming versions of this project, I plan
+ to add more information and incorporate time series forecasting."""
 
 
 tab_card_home = {'height': '92vh',
@@ -33,22 +47,24 @@ layout = dbc.Container([
                                 style={'margin-top': '15px'}),
                         dbc.Col([
                             html.H4("Overview", style={"margin-top": "15px"}),
-                            html.P(texto, style={"text-align": "justify"})
+                            html.P(texto, style={"text-align": "justify"}),
+                            html.P(texto_project_1),
+                            html.P(texto_project_1_1),
                         ], sm=6),
                         dbc.Col([
                             html.Div([
                                 html.H4("About the project", style={
                                         "margin-top": "15px"}),
-                                html.P(texto_project_1),
                                 html.P(texto_project_2),
                                 html.Li(
-                                    "Home - You see a brief overview of Vancouver and the project. (This page)", style={'margin-left': '15px'}),
+                                    "Home: You see a brief overview of Vancouver and the project. (This page)", style={'margin-left': '15px'}),
                                 html.Li(
-                                    "Maps - The analysis of crimes in georeferencing perspective.", style={'margin-left': '15px'}),
+                                    "Overview Analysis: Analysis by time, location and some metrics are displayed.", style={'margin-left': '15px'}),
                                 html.Li(
-                                    "Analysis - Analysis of crimes and some metrics.", style={'margin-left': '15px'}),
+                                    "Spatial Analysis: The analysis of crimes in georeferencing perspective.", style={'margin-left': '15px'}),
                             ], style={"text-align": "justify"}),
-
+                            html.Br(),
+                            html.P(texto_project_3),
                         ], sm=6),
                     ])
                 ])
