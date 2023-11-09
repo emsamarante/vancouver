@@ -1,5 +1,6 @@
 import plotly.express as px
 from dash_bootstrap_templates import load_figure_template
+import dash_bootstrap_components as dbc
 import pandas as pd
 load_figure_template("cyborg")
 
@@ -34,6 +35,13 @@ colorscale_res = [
 ]
 
 template = 'cyborg'
+
+
+def make_tooltip(text, target):
+    return dbc.Tooltip(
+        text,
+        target=target,
+    )
 
 #############################################################################
 #
@@ -75,7 +83,7 @@ fig_multilinhas.update_layout(
     main_config, height=230, xaxis_title=None, template=template)
 
 
-# CAnalysis by Season ===
+# Analysis by Season ===
 df = pd.DataFrame(df_store)
 fig_estacoes = px.bar(df.groupby('SEASON')['Counts'].sum().reset_index(),
                       x='SEASON', y='Counts')

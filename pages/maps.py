@@ -15,13 +15,13 @@ df_store_map = df_map0.to_dict()
 df_map = pd.DataFrame(df_store_map)
 
 years = df_map.YEAR.unique()
-crimes = sorted(df_map.TYPE.unique())
-seasons = sorted(df_map.SEASON.unique())
-months = sorted(df_map.MONTH.unique())
+# crimes = sorted(df_map.TYPE.unique())
+# seasons = sorted(df_map.SEASON.unique())
+# months = sorted(df_map.MONTH.unique())
 
 
-all_options = {'years': years, 'crimes': crimes,
-               'seasons': seasons, 'months': months}
+# all_options = {'years': years, 'crimes': crimes,
+#                'seasons': seasons, 'months': months}
 
 
 layout = dbc.Container(children=[
@@ -51,7 +51,7 @@ layout = dbc.Container(children=[
                             id="drop-year",
                             value=2021,
                             options=[{'label': i, 'value': i}
-                                     for i in all_options['years']],
+                                     for i in years],
                             clearable=False
                         )
                     ])

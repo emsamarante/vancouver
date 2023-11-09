@@ -40,13 +40,6 @@ def CARD(title, id, sm=6, lg=4, md=4, config=config_graph, style=tab_card):
     return layout
 
 
-def make_tooltip(text, target):
-    return dbc.Tooltip(
-        text,
-        target=target,
-    )
-
-
 years_options = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
 
 layout = dbc.Container(children=[
