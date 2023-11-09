@@ -47,6 +47,8 @@ def make_tooltip(text, target):
     )
 
 
+years_options = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
+
 layout = dbc.Container(children=[
     # Armazenamento de dataset
     dcc.Store(id='dataset', data=df_store),
@@ -74,7 +76,7 @@ layout = dbc.Container(children=[
                             id="drop-year-1",
                             value=2020,
                             options=[{'label': i, 'value': i}
-                                     for i in df.YEAR.unique()],
+                                     for i in years_options],
                             clearable=False
                         ),
                     ])
