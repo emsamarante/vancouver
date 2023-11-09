@@ -8,6 +8,9 @@ load_figure_template("cyborg")
 # Utils ===
 
 config_graph = {"displayModeBar": False, "showTips": False}
+config_graph_2 = {"displaylogo": False}
+
+
 tab_card = {'height': '100%'}
 main_config = {
     "hovermode": "x unified",

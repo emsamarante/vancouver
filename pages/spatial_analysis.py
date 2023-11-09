@@ -90,8 +90,8 @@ layout = dbc.Container(children=[
                                             html.H6(
                                                 "Percentage of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season",
-                                                      className='scroll',
-                                                      figure=fig_bar_season)
+                                                      figure=fig_bar_season,
+                                                      config=config_graph)
                                         ])
                                     ])
                                 ])
@@ -109,8 +109,8 @@ layout = dbc.Container(children=[
                                             html.H6(
                                                 "Counts of Crimes in Each Season"),
                                             dcc.Graph(id="crimes-season-abs",
-                                                      className='scroll',
-                                                      figure=fig_bar_season_abs)
+                                                      figure=fig_bar_season_abs,
+                                                      config=config_graph_2),
                                         ])
                                     ])
                                 ])
@@ -127,7 +127,8 @@ layout = dbc.Container(children=[
                                 dbc.Row([
                                     dbc.Col([
                                         html.H6("Crimes Georeferenced"),
-                                        dcc.Graph(id='map')
+                                        dcc.Graph(id='map',
+                                                  config=config_graph)
                                     ])
                                 ], className='g-2 my-auto', style={'margin-top': '9px'})
                             ])
