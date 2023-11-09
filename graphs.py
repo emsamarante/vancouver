@@ -85,7 +85,7 @@ fig_estacoes.update_layout(main_config, height=200,
 
 # Analysis by Period of Day ===
 df = pd.DataFrame(df_store)
-df_crimes = df.groupby(['PERIOD', 'TYPE'])['Counts'].sum(
+df_crimes = df.groupby(['YEAR', 'PERIOD', 'TYPE'])['Counts'].sum(
 ).reset_index()
 fig_periodo = px.pie(df_crimes,
                      names='PERIOD', values='Counts', color='Counts',

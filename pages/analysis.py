@@ -512,10 +512,12 @@ def update_graph(crime, year):
 @cache.memoize(timeout=TIMEOUT)  # in seconds
 @app.callback(
     Output("id-periodo", "figure"),
-    [Input('drop-crime-1', 'value'),]
+    [Input('drop-crime-1', 'value'),
+     Input('drop-year-1', 'value'),]
 )
-def update_graph(crime):
-    aux = df_crimes[df_crimes.TYPE.isin([crime])]
+def update_graph(crime, year):
+    aux = df_crimes[(df_crimes.TYPE.isin([crime])) &
+                    (df_crimes.YEAR.isin([year]))]
     fig_periodo = px.pie(aux,
                          names='PERIOD', values='Counts', color='Counts', template=template)
     fig_periodo.update_layout(main_config, height=170)
