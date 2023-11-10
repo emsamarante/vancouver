@@ -5,8 +5,8 @@ import plotly.express as px
 import pandas as pd
 from graphs import *
 from app import *
-import warnings
-warnings.filterwarnings("ignore")
+# import warnings
+# warnings.filterwarnings("ignore")
 
 
 df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)

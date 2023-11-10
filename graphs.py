@@ -54,7 +54,7 @@ def make_tooltip(text, target):
 
 
 # data ===
-df0 = pd.read_csv("data/dataset_agg.csv", index_col=0)
+df0 = pd.read_csv("data/dataset_agg_sample.csv", index_col=0)
 
 
 # To dict - para salvar no dcc.store
@@ -110,7 +110,7 @@ fig_periodo.update_layout(main_config, height=200)
 #
 #############################################################################
 
-df_map0 = pd.read_csv("data/dataset_mapa.csv", index_col=0)
+df_map0 = pd.read_csv("data/dataset_mapa_sample.csv", index_col=0)
 df_store_map = df_map0.sample(1000).to_dict()
 df_map = pd.DataFrame(df_store_map)
 
