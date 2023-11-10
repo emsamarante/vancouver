@@ -1,0 +1,7 @@
+dash
+pandas
+numpy
+dash_bootstrap_components
+dash_bootstrap_templates
+flask_caching
+gunicorn
