@@ -31,7 +31,7 @@ texto_project_3 = """In the upcoming versions of this project, I plan
  to add more information and incorporate time series forecasting."""
 
 
-tab_card_home = {'height': '92vh',
+tab_card_home = {'min-height': '100%',
                  "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 5px 6px 15px 0 rgba(0, 0, 0, 0.19)"}
 
 
